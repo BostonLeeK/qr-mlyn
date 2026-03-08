@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MLYN — Каталог арт-проєктів
 
-## Getting Started
+Каталог з сторінками арт-проєктів для перегляду по QR-коду. Next.js, Tailwind, TypeScript, Neon Postgres, Vercel Blob.
 
-First, run the development server:
+## Структура
+
+- `/` — головна (список проєктів)
+- `/p/[slug]` — сторінка проєкту (фото, назва, автор, опис, вартість)
+- `/admin` — вхід в адмінку
+- `/admin/dashboard` — управління проєктами
+- `/admin/projects/new` — новий проєкт
+- `/admin/projects/[id]` — редагування
+
+## Налаштування
+
+1. Створи `.env.local` на основі `.env.example`
+
+2. **База даних (Neon)**  
+   Додай `DATABASE_URL` з Vercel Marketplace → Neon Postgres.
+
+3. **Авторизація**  
+   `ADMIN_USER` та `ADMIN_PASSWORD` — логін/пароль для адмінки.
+
+4. **Blob (Vercel)**  
+   Додай `BLOB_READ_WRITE_TOKEN` для завантаження фото.
+
+5. **Ініціалізація БД**  
+   Таблиця створюється при першому відкритті головної. Або виклик `POST /api/init-db`.
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Деплой на Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Підключи Neon Postgres та Blob через Vercel Marketplace
+2. Задай змінні: `DATABASE_URL`, `ADMIN_USER`, `ADMIN_PASSWORD`, `BLOB_READ_WRITE_TOKEN`
+3. Deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+QR-код веде на головну сторінку каталогу.
