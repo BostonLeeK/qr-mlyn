@@ -15,13 +15,12 @@ export default async function Home() {
       <div className="flex-1">
         <header className="mx-auto max-w-6xl px-8 py-10">
         <div className="flex items-center justify-between">
-          <Link href="/" className="block transition-opacity hover:opacity-70">
+          <Link href="/" className="relative block h-12 w-28 shrink-0 transition-opacity hover:opacity-70 md:h-16 md:w-36">
             <Image
               src="/logo.png"
               alt="mlyn"
-              width={236}
-              height={130}
-              className="h-16 w-auto"
+              fill
+              className="object-contain object-left"
             />
           </Link>
           <p className="max-w-xs text-right font-body text-sm leading-relaxed text-text-muted">
@@ -82,10 +81,7 @@ export default async function Home() {
                 <p className="mt-6 font-body text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
                   Кераміка
                 </p>
-                <p className="mt-1 font-body text-xs text-text-muted">
-                  2020 — 2025
-                </p>
-                <h2 className="mt-4 text-center font-head text-xl font-semibold text-text">
+                <h2 className="mt-5 text-center font-head text-xl font-semibold text-text">
                   {project.title}
                 </h2>
                 <p className="mt-2 font-body text-sm text-accent">
