@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RichTextEditor from "./RichTextEditor";
@@ -31,8 +31,21 @@ export default function ProjectForm({
   const [cost, setCost] = useState(project?.cost ?? "");
   const [imageUrl, setImageUrl] = useState(project?.image_url ?? "");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!imageFile) {
+      setFilePreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(imageFile);
+    setFilePreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [imageFile]);
+
+  const previewUrl = filePreviewUrl || imageUrl || project?.image_url || null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,10 +198,14 @@ export default function ProjectForm({
             onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
             className="font-body mt-2 w-full text-[0.9rem] text-text file:mr-4 file:py-2 file:px-3 file:bg-accent file:text-bg file:font-medium"
           />
-          {project?.image_url && !imageFile && (
-            <p className="mt-2 font-body text-[0.85rem] text-text-muted truncate">
-              {project.image_url}
-            </p>
+          {previewUrl && (
+            <div className="mt-3 aspect-[3/4] w-full max-w-[200px] overflow-hidden rounded border border-border">
+              <img
+                src={previewUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            </div>
           )}
           <input
             type="url"
