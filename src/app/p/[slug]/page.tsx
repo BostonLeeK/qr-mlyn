@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import MarkdownContent from "./MarkdownContent";
+import { SegmentedBackground } from "@/components/SegmentedBackground";
 import { SegmentedLine } from "@/components/SegmentedLine";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +23,7 @@ export default async function ProjectPage({
 
   return (
     <div className="min-h-screen bg-bg">
-      <header className="sticky top-0 z-10 border-b border-border/80 bg-white backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-border/80 bg-white backdrop-blur-md">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-5">
           <Link href="/" className="block transition-opacity hover:opacity-70">
             <Image
@@ -50,8 +51,9 @@ export default async function ProjectPage({
             {project.title}
           </h1>
         </section>
-        <section className="bg-bg-dark py-20">
-          <div className="mx-auto flex max-w-4xl justify-end px-6">
+        <section className="relative py-20">
+          <SegmentedBackground />
+          <div className="relative z-10 mx-auto flex max-w-4xl justify-end px-6">
             <figure className="relative w-full max-w-[340px]">
               <div className="relative aspect-[3/4] overflow-hidden rounded-sm shadow-2xl">
                 {project.image_url ? (
@@ -66,7 +68,7 @@ export default async function ProjectPage({
                   </div>
                 )}
               </div>
-              <figcaption className="mt-5 font-body text-sm leading-relaxed text-white/80">
+              <figcaption className="mt-5 bg-accent px-3 py-2 font-body text-sm leading-relaxed text-white">
                 {project.title}, {project.author}
               </figcaption>
             </figure>
