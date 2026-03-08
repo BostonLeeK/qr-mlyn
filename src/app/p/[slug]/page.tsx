@@ -1,7 +1,9 @@
 import { getProjectBySlug } from "@/lib/db";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import MarkdownContent from "./MarkdownContent";
+import { SegmentedLine } from "@/components/SegmentedLine";
 
 export const dynamic = "force-dynamic";
 
@@ -20,13 +22,16 @@ export default async function ProjectPage({
 
   return (
     <div className="min-h-screen bg-bg">
-      <header className="sticky top-0 z-10 border-b border-border/80 bg-bg/90 backdrop-blur-md">
+      <header className="sticky top-0 z-10 border-b border-border/80 bg-white backdrop-blur-md">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-5">
-          <Link
-            href="/"
-            className="font-head text-sm font-semibold text-text transition-colors hover:text-accent"
-          >
-            mlyn
+          <Link href="/" className="block transition-opacity hover:opacity-70">
+            <Image
+              src="/logo.png"
+              alt="mlyn"
+              width={236}
+              height={130}
+              className="h-16 w-auto"
+            />
           </Link>
           <Link
             href="/"
@@ -82,6 +87,7 @@ export default async function ProjectPage({
           </div>
         </section>
       </main>
+      <SegmentedLine />
     </div>
   );
 }

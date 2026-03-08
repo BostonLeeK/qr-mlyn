@@ -1,4 +1,6 @@
 import { getProjects, initDb } from "@/lib/db";
+import { SegmentedLine } from "@/components/SegmentedLine";
+import Image from "next/image";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -8,11 +10,19 @@ export default async function Home() {
   const projects = await getProjects();
 
   return (
-    <div className="min-h-screen">
-      <header className="mx-auto max-w-6xl px-8 py-10">
+    <div className="flex min-h-screen flex-col">
+      <SegmentedLine />
+      <div className="flex-1">
+        <header className="mx-auto max-w-6xl px-8 py-10">
         <div className="flex items-center justify-between">
-          <Link href="/" className="font-head text-xl font-bold text-text hover:text-accent">
-            mlyn
+          <Link href="/" className="block transition-opacity hover:opacity-70">
+            <Image
+              src="/logo.png"
+              alt="mlyn"
+              width={236}
+              height={130}
+              className="h-16 w-auto"
+            />
           </Link>
           <p className="max-w-xs text-right font-body text-sm leading-relaxed text-text-muted">
             Кераміка, що виходить за межі утилітарності
@@ -99,6 +109,8 @@ export default async function Home() {
           </div>
         )}
       </main>
+      </div>
+      <SegmentedLine />
     </div>
   );
 }
