@@ -98,7 +98,7 @@ export default async function Home() {
                 13.03 — 22.03
               </p>
               <p className="mt-4 font-body text-sm text-text-muted">
-                Куратор проекту - Дмитро Білокінь
+                MLYN design hub | простір де живе український дизайн
               </p>
             </div>
             <div className="hidden w-px bg-border lg:block" />

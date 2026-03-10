@@ -21,6 +21,9 @@ export default async function ProjectPage({
   const priceNumber =
     project.cost.replace(/[^\d.,]/g, "").replace(",", ".") || project.cost;
 
+  const currency = (project as { currency?: string }).currency === "usd" ? "usd" : "uah";
+  const currencySymbol = currency === "usd" ? "$" : "₴";
+
   return (
     <div className="min-h-screen bg-bg">
       <header className="sticky top-0 z-50 border-b border-border/80 bg-white backdrop-blur-md">
@@ -81,7 +84,7 @@ export default async function ProjectPage({
           />
           <div className="mt-16 flex items-baseline gap-1 border-t border-border pt-8">
             <span className="font-head text-2xl font-medium text-text-muted">
-              $
+              {currencySymbol}
             </span>
             <span className="font-head text-4xl font-bold tabular-nums tracking-tight text-text">
               {priceNumber}

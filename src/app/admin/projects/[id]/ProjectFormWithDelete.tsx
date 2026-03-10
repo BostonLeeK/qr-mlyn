@@ -11,6 +11,7 @@ interface Project {
   description: string;
   cost: string;
   image_url: string | null;
+  currency?: string | null;
 }
 
 export default function ProjectFormWithDelete({ project }: { project: Project }) {

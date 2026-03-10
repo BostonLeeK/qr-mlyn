@@ -23,12 +23,17 @@ export async function initDb() {
       cost TEXT NOT NULL,
       image_url TEXT,
       font_size TEXT DEFAULT 'md',
+      currency TEXT DEFAULT 'uah',
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
   try {
     await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS font_size TEXT DEFAULT 'md'`;
+  } catch {
+  }
+  try {
+    await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'uah'`;
   } catch {
   }
 }
@@ -57,11 +62,21 @@ export async function createProject(data: {
   cost: string;
   image_url?: string;
   font_size?: string;
+  currency?: string;
 }) {
   const sql = getSql();
   const [row] = await sql`
-    INSERT INTO projects (slug, title, author, description, cost, image_url, font_size)
-    VALUES (${data.slug}, ${data.title}, ${data.author}, ${data.description}, ${data.cost}, ${data.image_url ?? null}, ${data.font_size ?? "md"})
+    INSERT INTO projects (slug, title, author, description, cost, image_url, font_size, currency)
+    VALUES (
+      ${data.slug},
+      ${data.title},
+      ${data.author},
+      ${data.description},
+      ${data.cost},
+      ${data.image_url ?? null},
+      ${data.font_size ?? "md"},
+      ${data.currency ?? "uah"}
+    )
     RETURNING *
   `;
   return row;
@@ -77,6 +92,7 @@ export async function updateProject(
     cost: string;
     image_url?: string;
     font_size?: string;
+    currency?: string;
   }
 ) {
   const sql = getSql();
@@ -89,6 +105,7 @@ export async function updateProject(
       cost = ${data.cost},
       image_url = ${data.image_url ?? null},
       font_size = ${data.font_size ?? "md"},
+      currency = ${data.currency ?? "uah"},
       updated_at = NOW()
     WHERE id = ${id}
     RETURNING *

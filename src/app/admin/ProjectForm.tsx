@@ -15,6 +15,7 @@ interface Project {
   description: string;
   cost: string;
   image_url: string | null;
+  currency?: string | null;
 }
 
 export default function ProjectForm({
@@ -29,6 +30,7 @@ export default function ProjectForm({
   const [author, setAuthor] = useState(project?.author ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
   const [cost, setCost] = useState(project?.cost ?? "");
+  const [currency, setCurrency] = useState(project?.currency ?? "uah");
   const [imageUrl, setImageUrl] = useState(project?.image_url ?? "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
@@ -85,6 +87,7 @@ export default function ProjectForm({
         author,
         description,
         cost,
+        currency,
         image_url: finalImageUrl || undefined,
       };
       if (project) {
@@ -184,9 +187,38 @@ export default function ProjectForm({
             value={cost}
             onChange={(e) => setCost(e.target.value)}
             className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
-            placeholder="500 грн"
+            placeholder={currency === "usd" ? "100" : "5000"}
             required
           />
+        </div>
+        <div>
+          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+            Валюта
+          </label>
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => setCurrency("uah")}
+              className={`font-body rounded-full border px-3 py-1 text-[0.85rem] ${
+                currency === "uah"
+                  ? "border-text bg-text text-bg"
+                  : "border-border bg-transparent text-text-muted"
+              }`}
+            >
+              ₴ Гривня
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrency("usd")}
+              className={`font-body rounded-full border px-3 py-1 text-[0.85rem] ${
+                currency === "usd"
+                  ? "border-text bg-text text-bg"
+                  : "border-border bg-transparent text-text-muted"
+              }`}
+            >
+              $ Долар
+            </button>
+          </div>
         </div>
         <div>
           <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
