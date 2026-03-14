@@ -1,5 +1,6 @@
 import { getProjects, initDb } from "@/lib/db";
 import { SegmentedLine } from "@/components/SegmentedLine";
+import { InstagramIcon } from "@/components/InstagramIcon";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -65,10 +66,12 @@ export default async function Home() {
               >
                 <div className="relative h-48 w-48 overflow-hidden rounded-full bg-bg-subtle">
                   {project.image_url ? (
-                    <img
+                    <Image
                       src={project.image_url}
                       alt={project.title}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      fill
+                      sizes="192px"
+                      className="object-cover transition duration-500 group-hover:scale-105"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
@@ -92,16 +95,30 @@ export default async function Home() {
           </div>
         )}
         {projects.length > 0 && (
-          <div className="mt-24 grid gap-12 border-t border-border pt-24 lg:grid-cols-[1fr,auto,1fr]">
-            <div className="lg:pr-12">
+          <div className="mt-24 flex flex-col gap-12 border-t border-border pt-24 sm:flex-row sm:items-end sm:justify-between">
+            <div>
               <p className="font-head text-4xl font-bold leading-tight text-text md:text-5xl">
                 13.03 — 22.03
               </p>
-              <p className="mt-4 font-body text-sm text-text-muted">
+              <p className="mt-3 font-body text-sm text-text-muted">
                 MLYN design hub | простір де живе український дизайн
               </p>
             </div>
-            <div className="hidden w-px bg-border lg:block" />
+            <div>
+              <p className="font-body text-xs uppercase tracking-[0.2em] text-text-muted">
+                Inst
+              </p>
+              <a
+                href="https://www.instagram.com/mlyn_dhp/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1.5 flex items-center gap-2 font-body text-sm text-text transition-colors hover:text-accent"
+                aria-label="Instagram @mlyn_dhp"
+              >
+                <InstagramIcon className="size-4" />
+                @mlyn_dhp
+              </a>
+            </div>
           </div>
         )}
       </main>

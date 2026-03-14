@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import MarkdownContent from "./MarkdownContent";
 import { SegmentedBackground } from "@/components/SegmentedBackground";
+import { InstagramIcon } from "@/components/InstagramIcon";
 import { SegmentedLine } from "@/components/SegmentedLine";
 
 export const dynamic = "force-dynamic";
@@ -60,10 +61,12 @@ export default async function ProjectPage({
             <figure className="relative w-full max-w-[340px]">
               <div className="relative aspect-[3/4] overflow-hidden rounded-sm shadow-2xl">
                 {project.image_url ? (
-                  <img
+                  <Image
                     src={project.image_url}
                     alt={project.title}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="340px"
+                    className="object-cover"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center bg-bg-dark">
@@ -82,13 +85,25 @@ export default async function ProjectPage({
             content={project.description}
             className="font-body font-article leading-[1.9] text-text"
           />
-          <div className="mt-16 flex items-baseline gap-1 border-t border-border pt-8">
-            <span className="font-head text-2xl font-medium text-text-muted">
-              {currencySymbol}
-            </span>
-            <span className="font-head text-4xl font-bold tabular-nums tracking-tight text-text">
-              {priceNumber}
-            </span>
+          <div className="mt-16 flex flex-col gap-8 border-t border-border pt-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex items-baseline gap-1">
+              <span className="font-head text-2xl font-medium text-text-muted">
+                {currencySymbol}
+              </span>
+              <span className="font-head text-4xl font-bold tabular-nums tracking-tight text-text">
+                {priceNumber}
+              </span>
+            </div>
+            <a
+              href="https://www.instagram.com/mlyn_dhp/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 font-body text-sm text-text-muted transition-colors hover:text-accent"
+              aria-label="Instagram"
+            >
+              <InstagramIcon className="size-5" />
+              <span>@mlyn_dhp</span>
+            </a>
           </div>
         </section>
       </main>
