@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { slug, title, subtitle, date_label, location, instagram_handle } = body;
+  const { slug, title, subtitle, poster_image_url, date_label, location, instagram_handle } = body;
   if (!slug || !title || !subtitle) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
       slug: String(slug),
       title: String(title),
       subtitle: String(subtitle),
+      poster_image_url: poster_image_url != null ? String(poster_image_url) : undefined,
       date_label: date_label != null ? String(date_label) : undefined,
       location: location != null ? String(location) : undefined,
       instagram_handle: instagram_handle != null ? String(instagram_handle) : undefined,

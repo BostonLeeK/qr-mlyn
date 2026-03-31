@@ -4,6 +4,7 @@ const DEFAULT_EVENT = {
   slug: "mlyn-ceramic-fair-2025",
   title: "MLYN CERAMIC FAIR",
   subtitle: "Виставка кераміки та мистецтва",
+  poster_image_url: null as string | null,
   date_label: "13.03 — 22.03",
   location: "MLYN design hub | простір де живе український дизайн",
   instagram_handle: "@mlyn_dhp",
@@ -28,6 +29,7 @@ export async function initDb() {
       slug TEXT UNIQUE NOT NULL,
       title TEXT NOT NULL,
       subtitle TEXT NOT NULL,
+      poster_image_url TEXT,
       date_label TEXT,
       location TEXT,
       instagram_handle TEXT,
@@ -68,6 +70,10 @@ export async function initDb() {
   } catch {
   }
   try {
+    await sql`ALTER TABLE events ADD COLUMN IF NOT EXISTS poster_image_url TEXT`;
+  } catch {
+  }
+  try {
     await sql`ALTER TABLE events ADD COLUMN IF NOT EXISTS location TEXT`;
   } catch {
   }
@@ -88,11 +94,12 @@ export async function initDb() {
   } catch {
   }
   await sql`
-    INSERT INTO events (slug, title, subtitle, date_label, location, instagram_handle)
+    INSERT INTO events (slug, title, subtitle, poster_image_url, date_label, location, instagram_handle)
     VALUES (
       ${DEFAULT_EVENT.slug},
       ${DEFAULT_EVENT.title},
       ${DEFAULT_EVENT.subtitle},
+      ${DEFAULT_EVENT.poster_image_url},
       ${DEFAULT_EVENT.date_label},
       ${DEFAULT_EVENT.location},
       ${DEFAULT_EVENT.instagram_handle}
@@ -289,17 +296,19 @@ export async function createEvent(data: {
   slug: string;
   title: string;
   subtitle: string;
+  poster_image_url?: string;
   date_label?: string;
   location?: string;
   instagram_handle?: string;
 }) {
   const sql = getSql();
   const [row] = await sql`
-    INSERT INTO events (slug, title, subtitle, date_label, location, instagram_handle)
+    INSERT INTO events (slug, title, subtitle, poster_image_url, date_label, location, instagram_handle)
     VALUES (
       ${data.slug},
       ${data.title},
       ${data.subtitle},
+      ${data.poster_image_url ?? null},
       ${data.date_label ?? null},
       ${data.location ?? null},
       ${data.instagram_handle ?? null}
@@ -323,6 +332,7 @@ export async function updateEvent(
     slug: string;
     title: string;
     subtitle: string;
+    poster_image_url?: string;
     date_label?: string;
     location?: string;
     instagram_handle?: string;
@@ -334,6 +344,7 @@ export async function updateEvent(
       slug = ${data.slug},
       title = ${data.title},
       subtitle = ${data.subtitle},
+      poster_image_url = ${data.poster_image_url ?? null},
       date_label = ${data.date_label ?? null},
       location = ${data.location ?? null},
       instagram_handle = ${data.instagram_handle ?? null},

@@ -8,6 +8,7 @@ interface EventData {
   slug: string;
   title: string;
   subtitle: string;
+  poster_image_url: string | null;
   date_label: string | null;
   location: string | null;
   instagram_handle: string | null;

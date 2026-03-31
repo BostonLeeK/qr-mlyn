@@ -59,6 +59,7 @@ export default async function Home() {
                 slug: string;
                 title: string;
                 subtitle: string;
+                poster_image_url: string | null;
                 date_label: string | null;
                 location: string | null;
                 instagram_handle: string | null;
@@ -69,6 +70,21 @@ export default async function Home() {
                 href={`/e/${event.slug}`}
                 className="group flex flex-col border-b border-border px-10 py-14 md:border-r md:[&:nth-child(2n)]:border-r-0"
               >
+                <div className="relative mb-6 aspect-[16/10] w-full overflow-hidden rounded-md bg-bg-subtle">
+                  {event.poster_image_url ? (
+                    <Image
+                      src={event.poster_image_url}
+                      alt={event.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <span className="font-head text-4xl text-text-muted/40">—</span>
+                    </div>
+                  )}
+                </div>
                 <p className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
                   Івент
                 </p>
