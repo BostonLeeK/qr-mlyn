@@ -60,7 +60,7 @@ export default async function EventPage({
               ).map((project) => (
                 <Link
                   key={project.id}
-                  href={`/p/${project.slug}`}
+                  href={`/e/${slug}/p/${project.slug}`}
                   className="group flex flex-col items-center border-b border-border px-10 py-14 md:border-r md:[&:nth-child(3n)]:border-r-0"
                 >
                   <div className="relative h-48 w-48 overflow-hidden rounded-full bg-bg-subtle">

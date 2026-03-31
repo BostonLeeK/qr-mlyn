@@ -39,7 +39,7 @@ export async function initDb() {
     CREATE TABLE IF NOT EXISTS projects (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       event_id UUID REFERENCES events(id) ON DELETE RESTRICT,
-      slug TEXT UNIQUE NOT NULL,
+      slug TEXT NOT NULL,
       title TEXT NOT NULL,
       author TEXT NOT NULL,
       description TEXT NOT NULL,
@@ -77,6 +77,14 @@ export async function initDb() {
   }
   try {
     await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS event_id UUID`;
+  } catch {
+  }
+  try {
+    await sql`ALTER TABLE projects DROP CONSTRAINT IF EXISTS projects_slug_key`;
+  } catch {
+  }
+  try {
+    await sql`CREATE UNIQUE INDEX IF NOT EXISTS projects_event_id_slug_key ON projects (event_id, slug)`;
   } catch {
   }
   await sql`
@@ -127,6 +135,27 @@ export async function getProjectBySlug(slug: string) {
     FROM projects
     JOIN events ON events.id = projects.event_id
     WHERE projects.slug = ${slug}
+    ORDER BY projects.created_at DESC
+    LIMIT 1
+  `;
+  return rows[0] ?? null;
+}
+
+export async function getProjectByEventAndSlug(eventSlug: string, slug: string) {
+  const sql = getSql();
+  const rows = await sql`
+    SELECT
+      projects.*,
+      events.slug AS event_slug,
+      events.title AS event_title,
+      events.subtitle AS event_subtitle,
+      events.date_label AS event_date_label,
+      events.location AS event_location,
+      events.instagram_handle AS event_instagram_handle
+    FROM projects
+    JOIN events ON events.id = projects.event_id
+    WHERE events.slug = ${eventSlug}
+      AND projects.slug = ${slug}
   `;
   return rows[0] ?? null;
 }

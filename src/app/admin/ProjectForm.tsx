@@ -76,6 +76,7 @@ export default function ProjectForm({
   }, [project?.event_id]);
 
   const previewUrl = filePreviewUrl || imageUrl || project?.image_url || null;
+  const selectedEventSlug = events.find((event) => event.id === eventId)?.slug ?? project?.event_slug ?? "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -294,7 +295,10 @@ export default function ProjectForm({
             placeholder="Або URL"
           />
         </div>
-        <QRCodeBlock slug={project ? project.slug : slugFromTitle(title)} />
+        <QRCodeBlock
+          eventSlug={selectedEventSlug}
+          slug={project ? project.slug : slugFromTitle(title)}
+        />
       </div>
       {error && (
         <p className="font-body text-[0.9rem] text-accent">{error}</p>

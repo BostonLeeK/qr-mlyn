@@ -1,22 +1,18 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import QRCodeStyling from "qr-code-styling";
 
 interface QRCodeBlockProps {
+  eventSlug: string;
   slug: string;
 }
 
-export default function QRCodeBlock({ slug }: QRCodeBlockProps) {
+export default function QRCodeBlock({ eventSlug, slug }: QRCodeBlockProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const qrRef = useRef<QRCodeStyling | null>(null);
-  const [origin, setOrigin] = useState("");
-
-  useEffect(() => {
-    setOrigin(window.location.origin);
-  }, []);
-
-  const href = origin ? `${origin}/p/${slug}` : "";
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const href = origin ? `${origin}/e/${eventSlug}/p/${slug}` : "";
 
   useEffect(() => {
     if (!href || !containerRef.current) return;
@@ -73,7 +69,7 @@ export default function QRCodeBlock({ slug }: QRCodeBlockProps) {
     URL.revokeObjectURL(url);
   };
 
-  if (!slug.trim() || !href) return null;
+  if (!eventSlug.trim() || !slug.trim() || !href) return null;
 
   return (
     <div className="rounded-lg border border-border bg-bg-subtle p-5 shadow-sm">
