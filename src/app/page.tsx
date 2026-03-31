@@ -110,6 +110,9 @@ export default async function Home() {
               <p className="font-body text-sm text-text-muted">
                 Каталог івентів MLYN
               </p>
+              <Link href="/blog" className="mt-2 inline-block font-body text-sm text-accent hover:underline">
+                Перейти до блогу
+              </Link>
             </div>
             <div>
               <p className="font-body text-xs uppercase tracking-[0.2em] text-text-muted">

@@ -24,6 +24,19 @@ function getSql() {
 export async function initDb() {
   const sql = getSql();
   await sql`
+    CREATE TABLE IF NOT EXISTS blog_posts (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      slug TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL,
+      excerpt TEXT,
+      content TEXT NOT NULL,
+      cover_image_url TEXT,
+      published_at TIMESTAMPTZ DEFAULT NOW(),
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `;
+  await sql`
     CREATE TABLE IF NOT EXISTS events (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       slug TEXT UNIQUE NOT NULL,
@@ -385,4 +398,86 @@ export async function updateEvent(
 export async function deleteEvent(id: string) {
   const sql = getSql();
   await sql`DELETE FROM events WHERE id = ${id}`;
+}
+
+export async function getBlogPosts() {
+  const sql = getSql();
+  return sql`
+    SELECT * FROM blog_posts
+    ORDER BY published_at DESC, created_at DESC
+  `;
+}
+
+export async function getBlogPostBySlug(slug: string) {
+  const sql = getSql();
+  const rows = await sql`
+    SELECT * FROM blog_posts
+    WHERE slug = ${slug}
+  `;
+  return rows[0] ?? null;
+}
+
+export async function getBlogPostById(id: string) {
+  const sql = getSql();
+  const rows = await sql`
+    SELECT * FROM blog_posts
+    WHERE id = ${id}
+  `;
+  return rows[0] ?? null;
+}
+
+export async function createBlogPost(data: {
+  slug: string;
+  title: string;
+  excerpt?: string;
+  content: string;
+  cover_image_url?: string;
+  published_at?: string;
+}) {
+  const sql = getSql();
+  const [row] = await sql`
+    INSERT INTO blog_posts (slug, title, excerpt, content, cover_image_url, published_at)
+    VALUES (
+      ${data.slug},
+      ${data.title},
+      ${data.excerpt ?? null},
+      ${data.content},
+      ${data.cover_image_url ?? null},
+      ${data.published_at ?? null}
+    )
+    RETURNING *
+  `;
+  return row;
+}
+
+export async function updateBlogPost(
+  id: string,
+  data: {
+    slug: string;
+    title: string;
+    excerpt?: string;
+    content: string;
+    cover_image_url?: string;
+    published_at?: string;
+  }
+) {
+  const sql = getSql();
+  const [row] = await sql`
+    UPDATE blog_posts SET
+      slug = ${data.slug},
+      title = ${data.title},
+      excerpt = ${data.excerpt ?? null},
+      content = ${data.content},
+      cover_image_url = ${data.cover_image_url ?? null},
+      published_at = ${data.published_at ?? null},
+      updated_at = NOW()
+    WHERE id = ${id}
+    RETURNING *
+  `;
+  return row;
+}
+
+export async function deleteBlogPost(id: string) {
+  const sql = getSql();
+  await sql`DELETE FROM blog_posts WHERE id = ${id}`;
 }

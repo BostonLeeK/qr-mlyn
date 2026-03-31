@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getEvents, getProjects } from "@/lib/db";
+import { getBlogPosts, getEvents, getProjects } from "@/lib/db";
 import { isAuthenticated } from "@/lib/auth";
 import AdminProjectList from "./AdminProjectList";
 import AdminEventList from "./AdminEventList";
+import AdminBlogList from "./AdminBlogList";
 import AdminLogout from "./AdminLogout";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ export default async function AdminDashboard() {
 
   const projects = await getProjects();
   const events = await getEvents();
+  const posts = await getBlogPosts();
 
   return (
     <div className="min-h-screen">
@@ -35,6 +37,12 @@ export default async function AdminDashboard() {
             >
               + Проєкт
             </Link>
+            <Link
+              href="/admin/blog/new"
+              className="font-body text-[0.9rem] text-accent hover:underline"
+            >
+              + Блог
+            </Link>
             <AdminLogout />
           </div>
         </div>
@@ -48,6 +56,10 @@ export default async function AdminDashboard() {
           Проєкти
         </h2>
         <AdminProjectList projects={projects as { id: string; slug: string; title: string; author: string }[]} />
+        <h2 className="mt-14 font-head text-2xl font-bold text-text">
+          Блог
+        </h2>
+        <AdminBlogList posts={posts as { id: string; title: string; published_at: string | null }[]} />
       </main>
     </div>
   );
