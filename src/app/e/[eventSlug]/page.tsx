@@ -10,13 +10,13 @@ export const dynamic = "force-dynamic";
 export default async function EventPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ eventSlug: string }>;
 }) {
   await initDb();
-  const { slug } = await params;
-  const event = await getEventBySlug(slug);
+  const { eventSlug } = await params;
+  const event = await getEventBySlug(eventSlug);
   if (!event) notFound();
-  const projects = await getProjectsByEventSlug(slug);
+  const projects = await getProjectsByEventSlug(eventSlug);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -38,6 +38,17 @@ export default async function EventPage({
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-8 pb-32">
+          <nav aria-label="Breadcrumb" className="mb-8">
+            <ol className="flex items-center gap-2 font-body text-xs uppercase tracking-[0.14em] text-text-muted">
+              <li>
+                <Link href="/" className="transition-colors hover:text-accent">
+                  Головна
+                </Link>
+              </li>
+              <li>/</li>
+              <li className="text-text">{event.title}</li>
+            </ol>
+          </nav>
           <div className="mb-20 text-center">
             <h1 className="font-head font-head-condensed text-5xl font-bold uppercase tracking-tight text-text md:text-6xl lg:text-7xl">
               {event.title}
@@ -60,7 +71,7 @@ export default async function EventPage({
               ).map((project) => (
                 <Link
                   key={project.id}
-                  href={`/e/${slug}/p/${project.slug}`}
+                  href={`/e/${eventSlug}/p/${project.slug}`}
                   className="group flex flex-col items-center border-b border-border px-10 py-14 md:border-r md:[&:nth-child(3n)]:border-r-0"
                 >
                   <div className="relative h-48 w-48 overflow-hidden rounded-full bg-bg-subtle">
