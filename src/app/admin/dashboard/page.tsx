@@ -9,13 +9,19 @@ import AdminLogout from "./AdminLogout";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const auth = await isAuthenticated();
   if (!auth) redirect("/admin");
 
   const projects = await getProjects();
   const events = await getEvents();
   const posts = await getBlogPosts();
+  const params = await searchParams;
+  const tab = params.tab === "projects" || params.tab === "blog" ? params.tab : "events";
 
   return (
     <div className="min-h-screen">
@@ -48,18 +54,56 @@ export default async function AdminDashboard() {
         </div>
       </header>
       <main className="mx-auto max-w-4xl px-6 pb-24">
-        <h1 className="font-head text-2xl font-bold text-text">
-          Івенти
-        </h1>
-        <AdminEventList events={events as { id: string; title: string; date_label: string | null }[]} />
-        <h2 className="mt-14 font-head text-2xl font-bold text-text">
-          Проєкти
-        </h2>
-        <AdminProjectList projects={projects as { id: string; slug: string; title: string; author: string }[]} />
-        <h2 className="mt-14 font-head text-2xl font-bold text-text">
-          Блог
-        </h2>
-        <AdminBlogList posts={posts as { id: string; title: string; published_at: string | null }[]} />
+        <div className="mb-8 flex gap-2 border-b border-border">
+          <Link
+            href="/admin/dashboard?tab=events"
+            className={`font-body border-b-2 px-3 py-2 text-[0.9rem] ${
+              tab === "events"
+                ? "border-text text-text"
+                : "border-transparent text-text-muted hover:text-text"
+            }`}
+          >
+            Івенти
+          </Link>
+          <Link
+            href="/admin/dashboard?tab=projects"
+            className={`font-body border-b-2 px-3 py-2 text-[0.9rem] ${
+              tab === "projects"
+                ? "border-text text-text"
+                : "border-transparent text-text-muted hover:text-text"
+            }`}
+          >
+            Проєкти
+          </Link>
+          <Link
+            href="/admin/dashboard?tab=blog"
+            className={`font-body border-b-2 px-3 py-2 text-[0.9rem] ${
+              tab === "blog"
+                ? "border-text text-text"
+                : "border-transparent text-text-muted hover:text-text"
+            }`}
+          >
+            Блог
+          </Link>
+        </div>
+        {tab === "events" ? (
+          <>
+            <h1 className="font-head text-2xl font-bold text-text">Івенти</h1>
+            <AdminEventList events={events as { id: string; title: string; date_label: string | null }[]} />
+          </>
+        ) : null}
+        {tab === "projects" ? (
+          <>
+            <h1 className="font-head text-2xl font-bold text-text">Проєкти</h1>
+            <AdminProjectList projects={projects as { id: string; slug: string; title: string; author: string }[]} />
+          </>
+        ) : null}
+        {tab === "blog" ? (
+          <>
+            <h1 className="font-head text-2xl font-bold text-text">Блог</h1>
+            <AdminBlogList posts={posts as { id: string; title: string; published_at: string | null }[]} />
+          </>
+        ) : null}
       </main>
     </div>
   );
