@@ -15,7 +15,9 @@ interface Project {
   title: string;
   author: string;
   description: string;
-  cost: string;
+  cost: string | null;
+  item_type?: string | null;
+  instagram_url?: string | null;
   image_url: string | null;
   currency?: string | null;
 }
@@ -37,7 +39,9 @@ export default function ProjectForm({
   const [title, setTitle] = useState(project?.title ?? "");
   const [author, setAuthor] = useState(project?.author ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
+  const [itemType, setItemType] = useState(project?.item_type === "instagram" ? "instagram" : "price");
   const [cost, setCost] = useState(project?.cost ?? "");
+  const [instagramUrl, setInstagramUrl] = useState(project?.instagram_url ?? "");
   const [currency, setCurrency] = useState(project?.currency ?? "uah");
   const [events, setEvents] = useState<EventItem[]>([]);
   const [eventId, setEventId] = useState(project?.event_id ?? "");
@@ -86,6 +90,10 @@ export default function ProjectForm({
       setError("Опис не може бути порожнім");
       return;
     }
+    if (itemType === "instagram" && !instagramUrl.trim()) {
+      setError("Додайте посилання Instagram");
+      return;
+    }
     setLoading(true);
     try {
       let finalImageUrl = imageUrl;
@@ -116,7 +124,9 @@ export default function ProjectForm({
         title,
         author,
         description,
-        cost,
+        item_type: itemType,
+        cost: itemType === "price" ? (cost || undefined) : undefined,
+        instagram_url: itemType === "instagram" ? (instagramUrl || undefined) : undefined,
         currency,
         image_url: finalImageUrl || undefined,
       };
@@ -228,6 +238,35 @@ export default function ProjectForm({
         </div>
         <div>
           <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+            Тип айтема
+          </label>
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => setItemType("price")}
+              className={`font-body rounded-full border px-3 py-1 text-[0.85rem] ${
+                itemType === "price"
+                  ? "border-text bg-text text-bg"
+                  : "border-border bg-transparent text-text-muted"
+              }`}
+            >
+              Ціна
+            </button>
+            <button
+              type="button"
+              onClick={() => setItemType("instagram")}
+              className={`font-body rounded-full border px-3 py-1 text-[0.85rem] ${
+                itemType === "instagram"
+                  ? "border-text bg-text text-bg"
+                  : "border-border bg-transparent text-text-muted"
+              }`}
+            >
+              Instagram
+            </button>
+          </div>
+        </div>
+        <div>
+          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
             Вартість
           </label>
           <input
@@ -236,38 +275,55 @@ export default function ProjectForm({
             onChange={(e) => setCost(e.target.value)}
             className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
             placeholder={currency === "usd" ? "100" : "5000"}
-            required
+            disabled={itemType !== "price"}
           />
         </div>
-        <div>
-          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
-            Валюта
-          </label>
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => setCurrency("uah")}
-              className={`font-body rounded-full border px-3 py-1 text-[0.85rem] ${
-                currency === "uah"
-                  ? "border-text bg-text text-bg"
-                  : "border-border bg-transparent text-text-muted"
-              }`}
-            >
-              ₴ Гривня
-            </button>
-            <button
-              type="button"
-              onClick={() => setCurrency("usd")}
-              className={`font-body rounded-full border px-3 py-1 text-[0.85rem] ${
-                currency === "usd"
-                  ? "border-text bg-text text-bg"
-                  : "border-border bg-transparent text-text-muted"
-              }`}
-            >
-              $ Долар
-            </button>
+        {itemType === "instagram" && (
+          <div>
+            <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+              Посилання Instagram
+            </label>
+            <input
+              type="url"
+              value={instagramUrl}
+              onChange={(e) => setInstagramUrl(e.target.value)}
+              className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+              placeholder="https://www.instagram.com/..."
+              required
+            />
           </div>
-        </div>
+        )}
+        {itemType === "price" && (
+          <div>
+            <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+              Валюта
+            </label>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => setCurrency("uah")}
+                className={`font-body rounded-full border px-3 py-1 text-[0.85rem] ${
+                  currency === "uah"
+                    ? "border-text bg-text text-bg"
+                    : "border-border bg-transparent text-text-muted"
+                }`}
+              >
+                ₴ Гривня
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrency("usd")}
+                className={`font-body rounded-full border px-3 py-1 text-[0.85rem] ${
+                  currency === "usd"
+                    ? "border-text bg-text text-bg"
+                    : "border-border bg-transparent text-text-muted"
+                }`}
+              >
+                $ Долар
+              </button>
+            </div>
+          </div>
+        )}
         <div>
           <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
             Фото

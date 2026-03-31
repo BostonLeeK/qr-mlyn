@@ -7,7 +7,9 @@ export interface Project {
   title: string;
   author: string;
   description: string;
-  cost: string;
+  cost: string | null;
+  item_type?: string | null;
+  instagram_url?: string | null;
   image_url: string | null;
   currency?: string | null;
   created_at: string;

@@ -20,10 +20,12 @@ export default async function EventProjectPage({
   if (!project) notFound();
 
   const priceNumber =
-    project.cost.replace(/[^\d.,]/g, "").replace(",", ".") || project.cost;
+    project.cost ? project.cost.replace(/[^\d.,]/g, "").replace(",", ".") || project.cost : "";
 
   const currency = (project as { currency?: string }).currency === "usd" ? "usd" : "uah";
   const currencySymbol = currency === "usd" ? "$" : "₴";
+  const itemType = (project as { item_type?: string }).item_type === "instagram" ? "instagram" : "price";
+  const itemInstagramUrl = (project as { instagram_url?: string | null }).instagram_url ?? "";
   const instagramHandle = (project as { event_instagram_handle?: string }).event_instagram_handle ?? "@mlyn_dhp";
   const instagramUrl = `https://www.instagram.com/${instagramHandle.replace("@", "")}/`;
 
@@ -88,14 +90,27 @@ export default async function EventProjectPage({
             className="font-body font-article leading-[1.9] text-text"
           />
           <div className="mt-16 flex flex-col gap-8 border-t border-border pt-8 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex items-baseline gap-1">
-              <span className="font-head text-2xl font-medium text-text-muted">
-                {currencySymbol}
-              </span>
-              <span className="font-head text-4xl font-bold tabular-nums tracking-tight text-text">
-                {priceNumber}
-              </span>
-            </div>
+            {itemType === "price" && project.cost ? (
+              <div className="flex items-baseline gap-1">
+                <span className="font-head text-2xl font-medium text-text-muted">
+                  {currencySymbol}
+                </span>
+                <span className="font-head text-4xl font-bold tabular-nums tracking-tight text-text">
+                  {priceNumber}
+                </span>
+              </div>
+            ) : itemType === "instagram" && itemInstagramUrl ? (
+              <a
+                href={itemInstagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-body text-sm text-accent transition-colors hover:underline"
+              >
+                Перейти в Instagram
+              </a>
+            ) : (
+              <div />
+            )}
             <a
               href={instagramUrl}
               target="_blank"

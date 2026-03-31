@@ -45,7 +45,9 @@ export async function initDb() {
       title TEXT NOT NULL,
       author TEXT NOT NULL,
       description TEXT NOT NULL,
-      cost TEXT NOT NULL,
+      cost TEXT,
+      item_type TEXT DEFAULT 'price',
+      instagram_url TEXT,
       image_url TEXT,
       font_size TEXT DEFAULT 'md',
       currency TEXT DEFAULT 'uah',
@@ -61,6 +63,23 @@ export async function initDb() {
     await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'uah'`;
   } catch {
   }
+  try {
+    await sql`ALTER TABLE projects ALTER COLUMN cost DROP NOT NULL`;
+  } catch {
+  }
+  try {
+    await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS item_type TEXT DEFAULT 'price'`;
+  } catch {
+  }
+  try {
+    await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS instagram_url TEXT`;
+  } catch {
+  }
+  await sql`
+    UPDATE projects
+    SET item_type = 'price'
+    WHERE item_type IS NULL
+  `;
   try {
     await sql`ALTER TABLE events ADD COLUMN IF NOT EXISTS subtitle TEXT NOT NULL DEFAULT ''`;
   } catch {
@@ -172,7 +191,9 @@ export async function createProject(data: {
   title: string;
   author: string;
   description: string;
-  cost: string;
+  cost?: string;
+  item_type?: string;
+  instagram_url?: string;
   image_url?: string;
   font_size?: string;
   currency?: string;
@@ -190,14 +211,16 @@ export async function createProject(data: {
     throw new Error("Event not found");
   }
   const [row] = await sql`
-    INSERT INTO projects (event_id, slug, title, author, description, cost, image_url, font_size, currency)
+    INSERT INTO projects (event_id, slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency)
     VALUES (
       ${eventId},
       ${data.slug},
       ${data.title},
       ${data.author},
       ${data.description},
-      ${data.cost},
+      ${data.cost ?? null},
+      ${data.item_type ?? "price"},
+      ${data.instagram_url ?? null},
       ${data.image_url ?? null},
       ${data.font_size ?? "md"},
       ${data.currency ?? "uah"}
@@ -214,7 +237,9 @@ export async function updateProject(
     title: string;
     author: string;
     description: string;
-    cost: string;
+    cost?: string;
+    item_type?: string;
+    instagram_url?: string;
     image_url?: string;
     font_size?: string;
     currency?: string;
@@ -235,7 +260,9 @@ export async function updateProject(
       title = ${data.title},
       author = ${data.author},
       description = ${data.description},
-      cost = ${data.cost},
+      cost = ${data.cost ?? null},
+      item_type = ${data.item_type ?? "price"},
+      instagram_url = ${data.instagram_url ?? null},
       image_url = ${data.image_url ?? null},
       font_size = ${data.font_size ?? "md"},
       currency = ${data.currency ?? "uah"},

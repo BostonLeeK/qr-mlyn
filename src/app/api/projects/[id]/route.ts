@@ -28,9 +28,13 @@ export async function PATCH(
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { slug, title, author, description, cost, image_url, font_size, currency, event_id, event_slug } = body;
-  if (!slug || !title || !author || !description || !cost) {
+  const { slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency, event_id, event_slug } = body;
+  if (!slug || !title || !author || !description) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+  const normalizedType = item_type === "instagram" ? "instagram" : "price";
+  if (normalizedType === "instagram" && !instagram_url) {
+    return NextResponse.json({ error: "Instagram URL is required for instagram type" }, { status: 400 });
   }
   try {
     const project = await updateProject(id, {
@@ -38,7 +42,9 @@ export async function PATCH(
       title: String(title),
       author: String(author),
       description: String(description),
-      cost: String(cost),
+      cost: cost != null && String(cost).trim() ? String(cost) : undefined,
+      item_type: normalizedType,
+      instagram_url: instagram_url != null ? String(instagram_url) : undefined,
       image_url: image_url != null ? String(image_url) : undefined,
       font_size: font_size != null ? String(font_size) : undefined,
       currency: currency != null ? String(currency) : undefined,

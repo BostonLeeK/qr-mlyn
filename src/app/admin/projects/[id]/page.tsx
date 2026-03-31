@@ -51,7 +51,9 @@ export default async function EditProjectPage({
                 title: string;
                 author: string;
                 description: string;
-                cost: string;
+                cost: string | null;
+                item_type?: string | null;
+                instagram_url?: string | null;
                 image_url: string | null;
               }
             }
