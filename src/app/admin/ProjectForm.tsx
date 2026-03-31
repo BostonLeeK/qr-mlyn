@@ -10,12 +10,20 @@ import { slugFromTitle } from "@/lib/slugify";
 interface Project {
   id: string;
   slug: string;
+  event_id?: string | null;
+  event_slug?: string | null;
   title: string;
   author: string;
   description: string;
   cost: string;
   image_url: string | null;
   currency?: string | null;
+}
+
+interface EventItem {
+  id: string;
+  slug: string;
+  title: string;
 }
 
 export default function ProjectForm({
@@ -31,6 +39,8 @@ export default function ProjectForm({
   const [description, setDescription] = useState(project?.description ?? "");
   const [cost, setCost] = useState(project?.cost ?? "");
   const [currency, setCurrency] = useState(project?.currency ?? "uah");
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [eventId, setEventId] = useState(project?.event_id ?? "");
   const [imageUrl, setImageUrl] = useState(project?.image_url ?? "");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
@@ -46,6 +56,24 @@ export default function ProjectForm({
     setFilePreviewUrl(url);
     return () => URL.revokeObjectURL(url);
   }, [imageFile]);
+
+  useEffect(() => {
+    let active = true;
+    const loadEvents = async () => {
+      const res = await fetch("/api/events", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!active || !Array.isArray(data)) return;
+      setEvents(data as EventItem[]);
+      if (!project?.event_id && data[0]?.id) {
+        setEventId(data[0].id);
+      }
+    };
+    loadEvents();
+    return () => {
+      active = false;
+    };
+  }, [project?.event_id]);
 
   const previewUrl = filePreviewUrl || imageUrl || project?.image_url || null;
 
@@ -83,6 +111,7 @@ export default function ProjectForm({
       }
       const body = {
         slug: project ? project.slug : slugFromTitle(title),
+        event_id: eventId || undefined,
         title,
         author,
         description,
@@ -137,6 +166,24 @@ export default function ProjectForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <div className="space-y-6">
+        <div>
+          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+            Івент
+          </label>
+          <select
+            value={eventId}
+            onChange={(e) => setEventId(e.target.value)}
+            className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+            required
+          >
+            <option value="" disabled>Оберіть івент</option>
+            {events.map((event) => (
+              <option key={event.id} value={event.id}>
+                {event.title}
+              </option>
+            ))}
+          </select>
+        </div>
         <div>
           <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
             Назва

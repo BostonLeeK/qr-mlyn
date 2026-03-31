@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getProjects } from "@/lib/db";
+import { getEvents, getProjects } from "@/lib/db";
 import { isAuthenticated } from "@/lib/auth";
 import AdminProjectList from "./AdminProjectList";
+import AdminEventList from "./AdminEventList";
 import AdminLogout from "./AdminLogout";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export default async function AdminDashboard() {
   if (!auth) redirect("/admin");
 
   const projects = await getProjects();
+  const events = await getEvents();
 
   return (
     <div className="min-h-screen">
@@ -22,10 +24,16 @@ export default async function AdminDashboard() {
           </span>
           <div className="flex items-center gap-8">
             <Link
+              href="/admin/events/new"
+              className="font-body text-[0.9rem] text-accent hover:underline"
+            >
+              + Івент
+            </Link>
+            <Link
               href="/admin/projects/new"
               className="font-body text-[0.9rem] text-accent hover:underline"
             >
-              + Додати
+              + Проєкт
             </Link>
             <AdminLogout />
           </div>
@@ -33,8 +41,12 @@ export default async function AdminDashboard() {
       </header>
       <main className="mx-auto max-w-4xl px-6 pb-24">
         <h1 className="font-head text-2xl font-bold text-text">
-          Проєкти
+          Івенти
         </h1>
+        <AdminEventList events={events as { id: string; title: string; date_label: string | null }[]} />
+        <h2 className="mt-14 font-head text-2xl font-bold text-text">
+          Проєкти
+        </h2>
         <AdminProjectList projects={projects as { id: string; slug: string; title: string; author: string }[]} />
       </main>
     </div>

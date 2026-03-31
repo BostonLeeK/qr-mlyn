@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProjects, createProject } from "@/lib/db";
+import { createEvent, getEvents } from "@/lib/db";
 import { isAuthenticated } from "@/lib/auth";
 
 export async function GET() {
-  const projects = await getProjects();
-  return NextResponse.json(projects);
+  const events = await getEvents();
+  return NextResponse.json(events);
 }
 
 export async function POST(request: NextRequest) {
@@ -17,26 +17,21 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { slug, title, author, description, cost, image_url, font_size, currency, event_id, event_slug } = body;
-  if (!slug || !title || !author || !description || !cost) {
+  const { slug, title, subtitle, date_label, location, instagram_handle } = body;
+  if (!slug || !title || !subtitle) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
   try {
-    const project = await createProject({
+    const event = await createEvent({
       slug: String(slug),
       title: String(title),
-      author: String(author),
-      description: String(description),
-      cost: String(cost),
-      image_url: image_url != null ? String(image_url) : undefined,
-      font_size: font_size != null ? String(font_size) : undefined,
-      currency: currency != null ? String(currency) : undefined,
-      event_id: event_id != null ? String(event_id) : undefined,
-      event_slug: event_slug != null ? String(event_slug) : undefined,
+      subtitle: String(subtitle),
+      date_label: date_label != null ? String(date_label) : undefined,
+      location: location != null ? String(location) : undefined,
+      instagram_handle: instagram_handle != null ? String(instagram_handle) : undefined,
     });
-    return NextResponse.json(project);
+    return NextResponse.json(event);
   } catch (err: unknown) {
-    console.error("POST /api/projects", err);
     const code = err && typeof err === "object" && "code" in err ? (err as { code: string }).code : "";
     if (code === "23505") {
       return NextResponse.json({ error: "Такий slug вже використовується" }, { status: 409 });

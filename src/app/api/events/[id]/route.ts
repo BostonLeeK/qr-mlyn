@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProjectById, updateProject, deleteProject } from "@/lib/db";
+import { deleteEvent, getEventById, updateEvent } from "@/lib/db";
 import { isAuthenticated } from "@/lib/auth";
 
 export async function GET(
@@ -7,11 +7,11 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const project = await getProjectById(id);
-  if (!project) {
+  const event = await getEventById(id);
+  if (!event) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  return NextResponse.json(project);
+  return NextResponse.json(event);
 }
 
 export async function PATCH(
@@ -28,35 +28,26 @@ export async function PATCH(
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { slug, title, author, description, cost, image_url, font_size, currency, event_id, event_slug } = body;
-  if (!slug || !title || !author || !description || !cost) {
+  const { slug, title, subtitle, date_label, location, instagram_handle } = body;
+  if (!slug || !title || !subtitle) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
   try {
-    const project = await updateProject(id, {
+    const event = await updateEvent(id, {
       slug: String(slug),
       title: String(title),
-      author: String(author),
-      description: String(description),
-      cost: String(cost),
-      image_url: image_url != null ? String(image_url) : undefined,
-      font_size: font_size != null ? String(font_size) : undefined,
-      currency: currency != null ? String(currency) : undefined,
-      event_id: event_id != null ? String(event_id) : undefined,
-      event_slug: event_slug != null ? String(event_slug) : undefined,
+      subtitle: String(subtitle),
+      date_label: date_label != null ? String(date_label) : undefined,
+      location: location != null ? String(location) : undefined,
+      instagram_handle: instagram_handle != null ? String(instagram_handle) : undefined,
     });
-    return NextResponse.json(project);
+    return NextResponse.json(event);
   } catch (err: unknown) {
-    console.error("PATCH /api/projects", err);
     const code = err && typeof err === "object" && "code" in err ? (err as { code: string }).code : "";
     if (code === "23505") {
       return NextResponse.json({ error: "Такий slug вже використовується" }, { status: 409 });
     }
-    const msg = err instanceof Error ? err.message : "Помилка збереження";
-    return NextResponse.json(
-      { error: process.env.NODE_ENV === "development" ? msg : "Помилка збереження" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Помилка збереження" }, { status: 500 });
   }
 }
 
@@ -68,6 +59,13 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { id } = await params;
-  await deleteProject(id);
-  return NextResponse.json({ success: true });
+  try {
+    await deleteEvent(id);
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json(
+      { error: "Неможливо видалити івент з прив'язаними проєктами" },
+      { status: 409 }
+    );
+  }
 }

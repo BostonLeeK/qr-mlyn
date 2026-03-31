@@ -24,6 +24,9 @@ export default async function ProjectPage({
 
   const currency = (project as { currency?: string }).currency === "usd" ? "usd" : "uah";
   const currencySymbol = currency === "usd" ? "$" : "₴";
+  const eventSlug = (project as { event_slug?: string }).event_slug ?? "";
+  const instagramHandle = (project as { event_instagram_handle?: string }).event_instagram_handle ?? "@mlyn_dhp";
+  const instagramUrl = `https://www.instagram.com/${instagramHandle.replace("@", "")}/`;
 
   return (
     <div className="min-h-screen bg-bg">
@@ -39,7 +42,7 @@ export default async function ProjectPage({
             />
           </Link>
           <Link
-            href="/"
+            href={eventSlug ? `/e/${eventSlug}` : "/"}
             className="font-body text-sm text-text-muted transition-colors hover:text-accent"
           >
             ← Назад
@@ -95,14 +98,14 @@ export default async function ProjectPage({
               </span>
             </div>
             <a
-              href="https://www.instagram.com/mlyn_dhp/"
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 font-body text-sm text-text-muted transition-colors hover:text-accent"
               aria-label="Instagram"
             >
               <InstagramIcon className="size-5" />
-              <span>@mlyn_dhp</span>
+              <span>{instagramHandle}</span>
             </a>
           </div>
         </section>

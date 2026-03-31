@@ -1,12 +1,12 @@
-import { redirect, notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { getProjectById } from "@/lib/db";
+import { getEventById } from "@/lib/db";
 import { isAuthenticated } from "@/lib/auth";
-import ProjectFormWithDelete from "./ProjectFormWithDelete";
+import EventFormWithDelete from "./EventFormWithDelete";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditProjectPage({
+export default async function EditEventPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -15,8 +15,8 @@ export default async function EditProjectPage({
   if (!auth) redirect("/admin");
 
   const { id } = await params;
-  const project = await getProjectById(id);
-  if (!project) notFound();
+  const event = await getEventById(id);
+  if (!event) notFound();
 
   return (
     <div className="min-h-screen">
@@ -38,21 +38,19 @@ export default async function EditProjectPage({
       </header>
       <main className="mx-auto max-w-2xl px-6 pb-24">
         <h1 className="font-head text-2xl font-bold text-text">
-          Редагувати проєкт
+          Редагувати івент
         </h1>
         <div className="mt-10">
-          <ProjectFormWithDelete
-            project={
-              project as {
+          <EventFormWithDelete
+            event={
+              event as {
                 id: string;
                 slug: string;
-                event_id?: string | null;
-                event_slug?: string | null;
                 title: string;
-                author: string;
-                description: string;
-                cost: string;
-                image_url: string | null;
+                subtitle: string;
+                date_label: string | null;
+                location: string | null;
+                instagram_handle: string | null;
               }
             }
           />

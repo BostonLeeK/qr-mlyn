@@ -1,22 +1,13 @@
-import { redirect, notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getProjectById } from "@/lib/db";
 import { isAuthenticated } from "@/lib/auth";
-import ProjectFormWithDelete from "./ProjectFormWithDelete";
+import EventForm from "../../EventForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditProjectPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function NewEventPage() {
   const auth = await isAuthenticated();
   if (!auth) redirect("/admin");
-
-  const { id } = await params;
-  const project = await getProjectById(id);
-  if (!project) notFound();
 
   return (
     <div className="min-h-screen">
@@ -38,24 +29,10 @@ export default async function EditProjectPage({
       </header>
       <main className="mx-auto max-w-2xl px-6 pb-24">
         <h1 className="font-head text-2xl font-bold text-text">
-          Редагувати проєкт
+          Новий івент
         </h1>
         <div className="mt-10">
-          <ProjectFormWithDelete
-            project={
-              project as {
-                id: string;
-                slug: string;
-                event_id?: string | null;
-                event_slug?: string | null;
-                title: string;
-                author: string;
-                description: string;
-                cost: string;
-                image_url: string | null;
-              }
-            }
-          />
+          <EventForm />
         </div>
       </main>
     </div>

@@ -1,4 +1,4 @@
-import { getProjects, initDb } from "@/lib/db";
+import { getEvents, initDb } from "@/lib/db";
 import { SegmentedLine } from "@/components/SegmentedLine";
 import { InstagramIcon } from "@/components/InstagramIcon";
 import Image from "next/image";
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   await initDb();
-  const projects = await getProjects();
+  const events = await getEvents();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -25,22 +25,25 @@ export default async function Home() {
             />
           </Link>
           <p className="max-w-xs text-right font-body text-sm leading-relaxed text-text-muted">
-            Кераміка, що виходить за межі утилітарності
+            Сучасний український дизайн ближче до людей
           </p>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-8 pb-32">
         <div className="mb-20 text-center">
           <h1 className="font-head font-head-condensed text-5xl font-bold uppercase tracking-tight text-text md:text-6xl lg:text-7xl">
-            MLYN CERAMIC FAIR
+            MLYN DESIGN HUB
           </h1>
           <p className="mt-6 font-body text-lg text-text-muted">
-            Виставка кераміки та мистецтва
+            Експозиційно-освітній простір сучасного українського дизайну
+          </p>
+          <p className="mt-3 font-body text-sm uppercase tracking-[0.14em] text-text-muted">
+            Поділ, Спаська 36/31 • щодня 10:00 — 19:00 • вхід вільний
           </p>
         </div>
-        {projects.length === 0 ? (
+        {events.length === 0 ? (
           <div className="py-32 text-center">
-            <p className="font-body text-text-muted">Поки що немає проєктів</p>
+            <p className="font-body text-text-muted">Поки що немає івентів</p>
             <Link
               href="/admin"
               className="mt-4 inline-block font-body text-accent hover:underline"
@@ -49,59 +52,47 @@ export default async function Home() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 border-t border-border md:grid-cols-3">
+          <div className="grid grid-cols-1 border-t border-border md:grid-cols-2">
             {(
-              projects as {
+              events as {
                 id: string;
                 slug: string;
                 title: string;
-                author: string;
-                image_url: string | null;
+                subtitle: string;
+                date_label: string | null;
+                location: string | null;
+                instagram_handle: string | null;
               }[]
-            ).map((project) => (
+            ).map((event) => (
               <Link
-                key={project.id}
-                href={`/p/${project.slug}`}
-                className="group flex flex-col items-center border-b border-border px-10 py-14 md:border-r md:[&:nth-child(3n)]:border-r-0"
+                key={event.id}
+                href={`/e/${event.slug}`}
+                className="group flex flex-col border-b border-border px-10 py-14 md:border-r md:[&:nth-child(2n)]:border-r-0"
               >
-                <div className="relative h-48 w-48 overflow-hidden rounded-full bg-bg-subtle">
-                  {project.image_url ? (
-                    <Image
-                      src={project.image_url}
-                      alt={project.title}
-                      fill
-                      sizes="192px"
-                      className="object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center">
-                      <span className="font-head text-4xl text-text-muted/40">
-                        —
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <p className="mt-6 font-body text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
-                  Кераміка
+                <p className="font-body text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+                  Івент
                 </p>
-                <h2 className="mt-5 text-center font-head text-xl font-semibold text-text">
-                  {project.title}
+                <h2 className="mt-4 font-head text-2xl font-semibold text-text md:text-3xl">
+                  {event.title}
                 </h2>
-                <p className="mt-2 font-body text-sm text-accent">
-                  {project.author}
+                <p className="mt-3 font-body text-sm text-text-muted">
+                  {event.subtitle}
+                </p>
+                <p className="mt-8 font-head text-xl font-bold text-text">
+                  {event.date_label ?? ""}
+                </p>
+                <p className="mt-2 font-body text-sm text-text-muted">
+                  {event.location ?? ""}
                 </p>
               </Link>
             ))}
           </div>
         )}
-        {projects.length > 0 && (
+        {events.length > 0 && (
           <div className="mt-24 flex flex-col gap-12 border-t border-border pt-24 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="font-head text-4xl font-bold leading-tight text-text md:text-5xl">
-                13.03 — 22.03
-              </p>
-              <p className="mt-3 font-body text-sm text-text-muted">
-                MLYN design hub | простір де живе український дизайн
+              <p className="font-body text-sm text-text-muted">
+                Каталог івентів MLYN
               </p>
             </div>
             <div>
