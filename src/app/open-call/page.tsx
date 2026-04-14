@@ -10,9 +10,10 @@ export default async function OpenCallPage() {
   const posts = await getBlogPosts();
 
   return (
-    <div className="min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <SegmentedLine />
-      <main className="mx-auto max-w-6xl px-8 py-12">
+      <div className="flex-1">
+        <main className="mx-auto max-w-6xl px-8 py-12">
         <div className="mb-12 flex items-center justify-between">
           <h1 className="font-head text-4xl font-bold text-text">Open Call</h1>
           <Link href="/" className="font-body text-sm text-text-muted hover:text-accent">
@@ -54,7 +55,8 @@ export default async function OpenCallPage() {
             ))}
           </div>
         )}
-      </main>
+        </main>
+      </div>
       <SegmentedLine />
     </div>
   );

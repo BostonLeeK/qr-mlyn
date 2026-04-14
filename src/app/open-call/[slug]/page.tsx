@@ -18,9 +18,10 @@ export default async function OpenCallPostPage({
   if (!post) notFound();
 
   return (
-    <div className="min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <SegmentedLine />
-      <main className="mx-auto max-w-3xl px-6 py-12">
+      <div className="flex-1">
+        <main className="mx-auto max-w-3xl px-6 py-12">
         <div className="mb-8 flex items-center justify-between">
           <Link href="/open-call" className="font-body text-sm text-text-muted hover:text-accent">
             ← До Open Call
@@ -48,7 +49,8 @@ export default async function OpenCallPostPage({
             className="font-body font-article leading-[1.9] text-text"
           />
         </article>
-      </main>
+        </main>
+      </div>
       <SegmentedLine />
     </div>
   );
