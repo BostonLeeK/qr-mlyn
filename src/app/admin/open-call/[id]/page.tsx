@@ -6,7 +6,7 @@ import BlogFormWithDelete from "./BlogFormWithDelete";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditBlogPostPage({
+export default async function EditOpenCallPostPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -25,13 +25,13 @@ export default async function EditBlogPostPage({
           <Link href="/admin/dashboard" className="font-head text-[1.1rem] font-bold text-text hover:text-accent">
             mlyn admin
           </Link>
-          <Link href="/admin/dashboard" className="font-body text-[0.9rem] text-text-muted hover:text-accent">
+          <Link href="/admin/dashboard?tab=opencall" className="font-body text-[0.9rem] text-text-muted hover:text-accent">
             ← До списку
           </Link>
         </div>
       </header>
       <main className="mx-auto max-w-2xl px-6 pb-24">
-        <h1 className="font-head text-2xl font-bold text-text">Редагувати публікацію</h1>
+        <h1 className="font-head text-2xl font-bold text-text">Редагувати Open Call</h1>
         <div className="mt-10">
           <BlogFormWithDelete
             post={

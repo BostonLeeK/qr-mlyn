@@ -67,6 +67,7 @@ export default async function EventPage({
                   title: string;
                   author: string;
                   image_url: string | null;
+                  category_label?: string | null;
                 }[]
               ).map((project) => (
                 <Link
@@ -92,7 +93,7 @@ export default async function EventPage({
                     )}
                   </div>
                   <p className="mt-6 font-body text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
-                    Кераміка
+                    {project.category_label?.trim() || "Кераміка"}
                   </p>
                   <h2 className="mt-5 text-center font-head text-xl font-semibold text-text">
                     {project.title}

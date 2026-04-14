@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -26,6 +26,8 @@ export default function BlogForm({
 }) {
   const router = useRouter();
   const [title, setTitle] = useState(post?.title ?? "");
+  const [slug, setSlug] = useState(post?.slug ?? "");
+  const slugEditedByUser = useRef(!!post);
   const [excerpt, setExcerpt] = useState(post?.excerpt ?? "");
   const [content, setContent] = useState(post?.content ?? "");
   const [publishedAt, setPublishedAt] = useState(post?.published_at ? post.published_at.slice(0, 10) : "");
@@ -44,6 +46,16 @@ export default function BlogForm({
     setCoverPreviewUrl(url);
     return () => URL.revokeObjectURL(url);
   }, [coverFile]);
+
+  useEffect(() => {
+    if (post) return;
+    if (slugEditedByUser.current) return;
+    if (!title.trim()) {
+      setSlug("");
+      return;
+    }
+    setSlug(slugFromTitle(title));
+  }, [title, post]);
 
   const previewUrl = coverPreviewUrl || coverImageUrl || post?.cover_image_url || null;
 
@@ -81,7 +93,7 @@ export default function BlogForm({
       }
 
       const body = {
-        slug: post ? post.slug : slugFromTitle(title),
+        slug: slugFromTitle(slug.trim() || title),
         title,
         excerpt: excerpt || undefined,
         content,
@@ -104,7 +116,7 @@ export default function BlogForm({
         }
         throw new Error(errMsg);
       }
-      router.push("/admin/dashboard");
+      router.push("/admin/dashboard?tab=opencall");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Помилка");
@@ -123,6 +135,25 @@ export default function BlogForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+            required
+          />
+        </div>
+        <div>
+          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+            URL (slug)
+          </label>
+          <p className="mb-1 font-body text-[0.75rem] text-text-muted">
+            Адреса сторінки: /open-call/<span className="text-text">{slug.trim() || "…"}</span>
+          </p>
+          <input
+            type="text"
+            value={slug}
+            onChange={(e) => {
+              slugEditedByUser.current = true;
+              setSlug(e.target.value);
+            }}
+            className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+            placeholder="латиниця-через-дефіс"
             required
           />
         </div>

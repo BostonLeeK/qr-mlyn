@@ -88,6 +88,15 @@ export async function initDb() {
     await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS instagram_url TEXT`;
   } catch {
   }
+  try {
+    await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS category_label TEXT`;
+  } catch {
+  }
+  await sql`
+    UPDATE projects
+    SET category_label = 'Кераміка'
+    WHERE category_label IS NULL OR TRIM(category_label) = ''
+  `;
   await sql`
     UPDATE projects
     SET item_type = 'price'
@@ -212,6 +221,7 @@ export async function createProject(data: {
   currency?: string;
   event_id?: string;
   event_slug?: string;
+  category_label?: string;
 }) {
   const sql = getSql();
   let eventId = data.event_id;
@@ -224,7 +234,7 @@ export async function createProject(data: {
     throw new Error("Event not found");
   }
   const [row] = await sql`
-    INSERT INTO projects (event_id, slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency)
+    INSERT INTO projects (event_id, slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency, category_label)
     VALUES (
       ${eventId},
       ${data.slug},
@@ -236,7 +246,8 @@ export async function createProject(data: {
       ${data.instagram_url ?? null},
       ${data.image_url ?? null},
       ${data.font_size ?? "md"},
-      ${data.currency ?? "uah"}
+      ${data.currency ?? "uah"},
+      ${data.category_label?.trim() ? data.category_label.trim() : "Кераміка"}
     )
     RETURNING *
   `;
@@ -258,6 +269,7 @@ export async function updateProject(
     currency?: string;
     event_id?: string;
     event_slug?: string;
+    category_label?: string;
   }
 ) {
   const sql = getSql();
@@ -279,6 +291,7 @@ export async function updateProject(
       image_url = ${data.image_url ?? null},
       font_size = ${data.font_size ?? "md"},
       currency = ${data.currency ?? "uah"},
+      category_label = ${data.category_label?.trim() ? data.category_label.trim() : "Кераміка"},
       updated_at = NOW()
     WHERE id = ${id}
     RETURNING *

@@ -7,7 +7,7 @@ import MarkdownContent from "@/app/p/[slug]/MarkdownContent";
 
 export const dynamic = "force-dynamic";
 
-export default async function BlogPostPage({
+export default async function OpenCallPostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -22,8 +22,8 @@ export default async function BlogPostPage({
       <SegmentedLine />
       <main className="mx-auto max-w-3xl px-6 py-12">
         <div className="mb-8 flex items-center justify-between">
-          <Link href="/blog" className="font-body text-sm text-text-muted hover:text-accent">
-            ← До блогу
+          <Link href="/open-call" className="font-body text-sm text-text-muted hover:text-accent">
+            ← До Open Call
           </Link>
           <p className="font-body text-xs uppercase tracking-[0.12em] text-text-muted">
             {post.published_at ? new Date(post.published_at).toLocaleDateString("uk-UA") : ""}

@@ -13,7 +13,7 @@ export default function AdminBlogList({ posts }: { posts: BlogPost[] }) {
     return (
       <p className="mt-8 font-body text-text-muted">
         Немає публікацій.{" "}
-        <Link href="/admin/blog/new" className="text-accent hover:underline">
+        <Link href="/admin/open-call/new" className="text-accent hover:underline">
           Додати
         </Link>
       </p>
@@ -25,7 +25,7 @@ export default function AdminBlogList({ posts }: { posts: BlogPost[] }) {
       {posts.map((post) => (
         <li key={post.id}>
           <Link
-            href={`/admin/blog/${post.id}`}
+            href={`/admin/open-call/${post.id}`}
             className="font-body flex items-center justify-between py-4 text-text transition-colors hover:text-accent"
           >
             <span>{post.title}</span>

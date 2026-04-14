@@ -19,10 +19,9 @@ export default function BlogFormWithDelete({ post }: { post: BlogPost }) {
   const handleDelete = async () => {
     if (!confirm("Видалити публікацію?")) return;
     const res = await fetch(`/api/blog/${post.id}`, { method: "DELETE" });
-    if (res.ok) {
-      router.push("/admin/dashboard");
-      router.refresh();
-    }
+    if (!res.ok) return;
+    router.push("/admin/dashboard?tab=opencall");
+    router.refresh();
   };
 
   return <BlogForm post={post} onDelete={handleDelete} />;

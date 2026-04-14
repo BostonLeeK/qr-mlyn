@@ -28,7 +28,7 @@ export async function PATCH(
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency, event_id, event_slug } = body;
+  const { slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency, event_id, event_slug, category_label } = body;
   if (!slug || !title || !author || !description) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
@@ -50,6 +50,7 @@ export async function PATCH(
       currency: currency != null ? String(currency) : undefined,
       event_id: event_id != null ? String(event_id) : undefined,
       event_slug: event_slug != null ? String(event_slug) : undefined,
+      category_label: category_label != null ? String(category_label) : undefined,
     });
     return NextResponse.json(project);
   } catch (err: unknown) {

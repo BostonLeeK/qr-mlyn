@@ -20,6 +20,7 @@ interface Project {
   instagram_url?: string | null;
   image_url: string | null;
   currency?: string | null;
+  category_label?: string | null;
 }
 
 interface EventItem {
@@ -38,6 +39,9 @@ export default function ProjectForm({
   const router = useRouter();
   const [title, setTitle] = useState(project?.title ?? "");
   const [author, setAuthor] = useState(project?.author ?? "");
+  const [categoryLabel, setCategoryLabel] = useState(
+    project?.category_label?.trim() || "Кераміка"
+  );
   const [description, setDescription] = useState(project?.description ?? "");
   const [itemType, setItemType] = useState(project?.item_type === "instagram" ? "instagram" : "price");
   const [cost, setCost] = useState(project?.cost ?? "");
@@ -129,6 +133,7 @@ export default function ProjectForm({
         instagram_url: itemType === "instagram" ? (instagramUrl || undefined) : undefined,
         currency,
         image_url: finalImageUrl || undefined,
+        category_label: categoryLabel.trim() || undefined,
       };
       if (project) {
         const res = await fetch(`/api/projects/${project.id}`, {
@@ -219,6 +224,18 @@ export default function ProjectForm({
             className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
             placeholder="Ім'я автора"
             required
+          />
+        </div>
+        <div>
+          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+            Підпис у каталозі
+          </label>
+          <input
+            type="text"
+            value={categoryLabel}
+            onChange={(e) => setCategoryLabel(e.target.value)}
+            className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+            placeholder="Напр. Кераміка"
           />
         </div>
         <div>

@@ -5,7 +5,7 @@ import BlogForm from "../../BlogForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function NewBlogPostPage() {
+export default async function NewOpenCallPostPage() {
   const auth = await isAuthenticated();
   if (!auth) redirect("/admin");
 
@@ -22,7 +22,7 @@ export default async function NewBlogPostPage() {
         </div>
       </header>
       <main className="mx-auto max-w-2xl px-6 pb-24">
-        <h1 className="font-head text-2xl font-bold text-text">Нова публікація</h1>
+        <h1 className="font-head text-2xl font-bold text-text">Нова публікація Open Call</h1>
         <div className="mt-10">
           <BlogForm />
         </div>

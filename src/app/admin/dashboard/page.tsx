@@ -21,7 +21,8 @@ export default async function AdminDashboard({
   const events = await getEvents();
   const posts = await getBlogPosts();
   const params = await searchParams;
-  const tab = params.tab === "projects" || params.tab === "blog" ? params.tab : "events";
+  const tab =
+    params.tab === "projects" || params.tab === "opencall" ? params.tab : "events";
 
   return (
     <div className="min-h-screen">
@@ -44,10 +45,10 @@ export default async function AdminDashboard({
               + Проєкт
             </Link>
             <Link
-              href="/admin/blog/new"
+              href="/admin/open-call/new"
               className="font-body text-[0.9rem] text-accent hover:underline"
             >
-              + Блог
+              + Open Call
             </Link>
             <AdminLogout />
           </div>
@@ -76,14 +77,14 @@ export default async function AdminDashboard({
             Проєкти
           </Link>
           <Link
-            href="/admin/dashboard?tab=blog"
+            href="/admin/dashboard?tab=opencall"
             className={`font-body border-b-2 px-3 py-2 text-[0.9rem] ${
-              tab === "blog"
+              tab === "opencall"
                 ? "border-text text-text"
                 : "border-transparent text-text-muted hover:text-text"
             }`}
           >
-            Блог
+            Open Call
           </Link>
         </div>
         {tab === "events" ? (
@@ -98,9 +99,9 @@ export default async function AdminDashboard({
             <AdminProjectList projects={projects as { id: string; slug: string; title: string; author: string }[]} />
           </>
         ) : null}
-        {tab === "blog" ? (
+        {tab === "opencall" ? (
           <>
-            <h1 className="font-head text-2xl font-bold text-text">Блог</h1>
+            <h1 className="font-head text-2xl font-bold text-text">Open Call</h1>
             <AdminBlogList posts={posts as { id: string; title: string; published_at: string | null }[]} />
           </>
         ) : null}

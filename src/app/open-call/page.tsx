@@ -5,7 +5,7 @@ import { SegmentedLine } from "@/components/SegmentedLine";
 
 export const dynamic = "force-dynamic";
 
-export default async function BlogPage() {
+export default async function OpenCallPage() {
   await initDb();
   const posts = await getBlogPosts();
 
@@ -14,7 +14,7 @@ export default async function BlogPage() {
       <SegmentedLine />
       <main className="mx-auto max-w-6xl px-8 py-12">
         <div className="mb-12 flex items-center justify-between">
-          <h1 className="font-head text-4xl font-bold text-text">Блог</h1>
+          <h1 className="font-head text-4xl font-bold text-text">Open Call</h1>
           <Link href="/" className="font-body text-sm text-text-muted hover:text-accent">
             ← На головну
           </Link>
@@ -31,7 +31,7 @@ export default async function BlogPage() {
               cover_image_url: string | null;
               published_at: string | null;
             }[]).map((post) => (
-              <Link key={post.id} href={`/blog/${post.slug}`} className="group block border border-border">
+              <Link key={post.id} href={`/open-call/${post.slug}`} className="group block border border-border">
                 <div className="relative aspect-[16/10] w-full bg-bg-subtle">
                   {post.cover_image_url ? (
                     <Image

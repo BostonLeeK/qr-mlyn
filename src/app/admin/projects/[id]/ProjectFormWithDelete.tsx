@@ -14,6 +14,7 @@ interface Project {
   instagram_url?: string | null;
   image_url: string | null;
   currency?: string | null;
+  category_label?: string | null;
 }
 
 export default function ProjectFormWithDelete({ project }: { project: Project }) {

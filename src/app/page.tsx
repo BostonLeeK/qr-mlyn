@@ -70,13 +70,13 @@ export default async function Home() {
                 href={`/e/${event.slug}`}
                 className="group flex flex-col border-b border-border px-10 py-14 md:border-r md:[&:nth-child(2n)]:border-r-0"
               >
-                <div className="relative mb-6 aspect-[16/10] w-full overflow-hidden rounded-md bg-bg-subtle">
+                <div className="relative mx-auto mb-6 aspect-[3/5] w-full max-w-[220px] overflow-hidden rounded-md bg-bg-subtle md:max-w-[260px]">
                   {event.poster_image_url ? (
                     <Image
                       src={event.poster_image_url}
                       alt={event.title}
                       fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
+                      sizes="(max-width: 768px) 220px, 260px"
                       className="object-cover transition duration-500 group-hover:scale-105"
                     />
                   ) : (
@@ -110,8 +110,8 @@ export default async function Home() {
               <p className="font-body text-sm text-text-muted">
                 Каталог івентів MLYN
               </p>
-              <Link href="/blog" className="mt-2 inline-block font-body text-sm text-accent hover:underline">
-                Перейти до блогу
+              <Link href="/open-call" className="mt-2 inline-block font-body text-sm text-accent hover:underline">
+                Перейти до Open Call
               </Link>
             </div>
             <div>
