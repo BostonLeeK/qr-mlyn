@@ -1,4 +1,4 @@
-import { getEventBySlug, getProjectsByEventSlug, initDb } from "@/lib/db";
+import { getEventBySlug, getProjectsByEventSlugVisibility, initDb } from "@/lib/db";
 import { isAuthenticated } from "@/lib/auth";
 import { SegmentedLine } from "@/components/SegmentedLine";
 import { InstagramIcon } from "@/components/InstagramIcon";
@@ -21,7 +21,7 @@ export default async function EventPage({
   const canPreview = search.preview === "1" && (await isAuthenticated());
   const event = await getEventBySlug(eventSlug, { includeDrafts: canPreview });
   if (!event) notFound();
-  const projects = await getProjectsByEventSlug(eventSlug);
+  const projects = await getProjectsByEventSlugVisibility(eventSlug, { publishedOnly: true });
 
   return (
     <div className="flex min-h-screen flex-col">

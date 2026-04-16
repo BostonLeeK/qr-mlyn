@@ -15,6 +15,7 @@ interface Project {
   image_url: string | null;
   currency?: string | null;
   category_label?: string | null;
+  is_published?: boolean;
 }
 
 export default function ProjectFormWithDelete({ project }: { project: Project }) {

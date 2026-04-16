@@ -1,4 +1,5 @@
 import { getProjectByEventAndSlug } from "@/lib/db";
+import { isAuthenticated } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,11 +12,15 @@ export const dynamic = "force-dynamic";
 
 export default async function EventProjectPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ eventSlug: string; slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }) {
   const { eventSlug, slug } = await params;
-  const project = await getProjectByEventAndSlug(eventSlug, slug);
+  const search = await searchParams;
+  const canPreview = search.preview === "1" && (await isAuthenticated());
+  const project = await getProjectByEventAndSlug(eventSlug, slug, { includeDrafts: canPreview });
 
   if (!project) notFound();
 

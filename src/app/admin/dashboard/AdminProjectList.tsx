@@ -7,6 +7,7 @@ interface Project {
   slug: string;
   title: string;
   author: string;
+  is_published?: boolean;
 }
 
 export default function AdminProjectList({ projects }: { projects: Project[] }) {
@@ -30,7 +31,9 @@ export default function AdminProjectList({ projects }: { projects: Project[] }) 
             className="font-body flex items-center justify-between py-4 text-text hover:text-accent transition-colors"
           >
             <span>{p.title}</span>
-            <span className="text-[0.9rem] text-text-muted">{p.author}</span>
+            <span className="text-[0.9rem] text-text-muted">
+              {p.is_published === false ? "Чернетка" : "Опубліковано"} · {p.author}
+            </span>
           </Link>
         </li>
       ))}

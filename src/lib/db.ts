@@ -92,6 +92,10 @@ export async function initDb() {
     await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS category_label TEXT`;
   } catch {
   }
+  try {
+    await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT TRUE`;
+  } catch {
+  }
   await sql`
     UPDATE projects
     SET category_label = 'Кераміка'
@@ -161,7 +165,24 @@ export async function initDb() {
 }
 
 export async function getProjects() {
+  return getProjectsByVisibility();
+}
+
+export async function getProjectsByVisibility(options?: { publishedOnly?: boolean }) {
   const sql = getSql();
+  const publishedOnly = options?.publishedOnly ?? false;
+  if (publishedOnly) {
+    return sql`
+      SELECT
+        projects.*,
+        events.slug AS event_slug,
+        events.title AS event_title
+      FROM projects
+      JOIN events ON events.id = projects.event_id
+      WHERE projects.is_published = TRUE
+      ORDER BY projects.created_at DESC
+    `;
+  }
   return sql`
     SELECT
       projects.*,
@@ -173,8 +194,27 @@ export async function getProjects() {
   `;
 }
 
-export async function getProjectBySlug(slug: string) {
+export async function getProjectBySlug(slug: string, options?: { includeDrafts?: boolean }) {
   const sql = getSql();
+  const includeDrafts = options?.includeDrafts ?? false;
+  if (includeDrafts) {
+    const rows = await sql`
+      SELECT
+        projects.*,
+        events.slug AS event_slug,
+        events.title AS event_title,
+        events.subtitle AS event_subtitle,
+        events.date_label AS event_date_label,
+        events.location AS event_location,
+        events.instagram_handle AS event_instagram_handle
+      FROM projects
+      JOIN events ON events.id = projects.event_id
+      WHERE projects.slug = ${slug}
+      ORDER BY projects.created_at DESC
+      LIMIT 1
+    `;
+    return rows[0] ?? null;
+  }
   const rows = await sql`
     SELECT
       projects.*,
@@ -187,14 +227,33 @@ export async function getProjectBySlug(slug: string) {
     FROM projects
     JOIN events ON events.id = projects.event_id
     WHERE projects.slug = ${slug}
+      AND projects.is_published = TRUE
     ORDER BY projects.created_at DESC
     LIMIT 1
   `;
   return rows[0] ?? null;
 }
 
-export async function getProjectByEventAndSlug(eventSlug: string, slug: string) {
+export async function getProjectByEventAndSlug(eventSlug: string, slug: string, options?: { includeDrafts?: boolean }) {
   const sql = getSql();
+  const includeDrafts = options?.includeDrafts ?? false;
+  if (includeDrafts) {
+    const rows = await sql`
+      SELECT
+        projects.*,
+        events.slug AS event_slug,
+        events.title AS event_title,
+        events.subtitle AS event_subtitle,
+        events.date_label AS event_date_label,
+        events.location AS event_location,
+        events.instagram_handle AS event_instagram_handle
+      FROM projects
+      JOIN events ON events.id = projects.event_id
+      WHERE events.slug = ${eventSlug}
+        AND projects.slug = ${slug}
+    `;
+    return rows[0] ?? null;
+  }
   const rows = await sql`
     SELECT
       projects.*,
@@ -208,6 +267,7 @@ export async function getProjectByEventAndSlug(eventSlug: string, slug: string) 
     JOIN events ON events.id = projects.event_id
     WHERE events.slug = ${eventSlug}
       AND projects.slug = ${slug}
+      AND projects.is_published = TRUE
   `;
   return rows[0] ?? null;
 }
@@ -226,6 +286,7 @@ export async function createProject(data: {
   event_id?: string;
   event_slug?: string;
   category_label?: string;
+  is_published?: boolean;
 }) {
   const sql = getSql();
   let eventId = data.event_id;
@@ -238,7 +299,7 @@ export async function createProject(data: {
     throw new Error("Event not found");
   }
   const [row] = await sql`
-    INSERT INTO projects (event_id, slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency, category_label)
+    INSERT INTO projects (event_id, slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency, category_label, is_published)
     VALUES (
       ${eventId},
       ${data.slug},
@@ -251,7 +312,8 @@ export async function createProject(data: {
       ${data.image_url ?? null},
       ${data.font_size ?? "md"},
       ${data.currency ?? "uah"},
-      ${data.category_label?.trim() ? data.category_label.trim() : "Кераміка"}
+      ${data.category_label?.trim() ? data.category_label.trim() : "Кераміка"},
+      ${data.is_published ?? true}
     )
     RETURNING *
   `;
@@ -274,6 +336,7 @@ export async function updateProject(
     event_id?: string;
     event_slug?: string;
     category_label?: string;
+    is_published?: boolean;
   }
 ) {
   const sql = getSql();
@@ -296,6 +359,7 @@ export async function updateProject(
       font_size = ${data.font_size ?? "md"},
       currency = ${data.currency ?? "uah"},
       category_label = ${data.category_label?.trim() ? data.category_label.trim() : "Кераміка"},
+      is_published = ${data.is_published ?? true},
       updated_at = NOW()
     WHERE id = ${id}
     RETURNING *
@@ -358,7 +422,22 @@ export async function getEventBySlug(slug: string, options?: { includeDrafts?: b
 }
 
 export async function getProjectsByEventSlug(slug: string) {
+  return getProjectsByEventSlugVisibility(slug);
+}
+
+export async function getProjectsByEventSlugVisibility(slug: string, options?: { publishedOnly?: boolean }) {
   const sql = getSql();
+  const publishedOnly = options?.publishedOnly ?? false;
+  if (publishedOnly) {
+    return sql`
+      SELECT projects.*
+      FROM projects
+      JOIN events ON events.id = projects.event_id
+      WHERE events.slug = ${slug}
+        AND projects.is_published = TRUE
+      ORDER BY projects.created_at DESC
+    `;
+  }
   return sql`
     SELECT projects.*
     FROM projects

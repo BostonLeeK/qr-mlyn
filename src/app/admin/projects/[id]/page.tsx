@@ -56,6 +56,7 @@ export default async function EditProjectPage({
                 instagram_url?: string | null;
                 image_url: string | null;
                 category_label?: string | null;
+                is_published?: boolean;
               }
             }
           />

@@ -21,6 +21,7 @@ interface Project {
   image_url: string | null;
   currency?: string | null;
   category_label?: string | null;
+  is_published?: boolean;
 }
 
 interface EventItem {
@@ -50,6 +51,7 @@ export default function ProjectForm({
   const [events, setEvents] = useState<EventItem[]>([]);
   const [eventId, setEventId] = useState(project?.event_id ?? "");
   const [imageUrl, setImageUrl] = useState(project?.image_url ?? "");
+  const [isPublished, setIsPublished] = useState(project?.is_published ?? true);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -134,6 +136,7 @@ export default function ProjectForm({
         currency,
         image_url: finalImageUrl || undefined,
         category_label: categoryLabel.trim() || undefined,
+        is_published: isPublished,
       };
       if (project) {
         const res = await fetch(`/api/projects/${project.id}`, {
@@ -343,6 +346,19 @@ export default function ProjectForm({
         )}
         <div>
           <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+            Статус
+          </label>
+          <select
+            value={isPublished ? "published" : "draft"}
+            onChange={(e) => setIsPublished(e.target.value === "published")}
+            className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+          >
+            <option value="published">Опубліковано</option>
+            <option value="draft">Чернетка</option>
+          </select>
+        </div>
+        <div>
+          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
             Фото
           </label>
           <input
@@ -390,6 +406,15 @@ export default function ProjectForm({
         >
           Скасувати
         </Link>
+        {(project || (title.trim() && selectedEventSlug)) && (
+          <Link
+            href={`/e/${selectedEventSlug}/p/${project ? project.slug : slugFromTitle(title)}?preview=1`}
+            target="_blank"
+            className="font-body text-[0.9rem] text-text-muted hover:text-accent"
+          >
+            Preview
+          </Link>
+        )}
         {project && onDelete && (
           <button
             type="button"

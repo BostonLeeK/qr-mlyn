@@ -93,13 +93,17 @@ export default function BlogForm({
         finalCoverImageUrl = uploadData.url ?? "";
       }
 
+      const effectivePublishedAt =
+        status === "published"
+          ? (publishedAt || new Date().toISOString().slice(0, 10))
+          : "";
       const body = {
         slug: slugFromTitle(slug.trim() || title),
         title,
         excerpt: excerpt || undefined,
         content,
         cover_image_url: finalCoverImageUrl || undefined,
-        published_at: status === "published" && publishedAt ? `${publishedAt}T10:00:00.000Z` : undefined,
+        published_at: effectivePublishedAt ? `${effectivePublishedAt}T10:00:00.000Z` : undefined,
       };
       const res = await fetch(post ? `/api/blog/${post.id}` : "/api/blog", {
         method: post ? "PATCH" : "POST",
@@ -171,7 +175,13 @@ export default function BlogForm({
           <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">Статус</label>
           <select
             value={status}
-            onChange={(e) => setStatus(e.target.value === "published" ? "published" : "draft")}
+            onChange={(e) => {
+              const nextStatus = e.target.value === "published" ? "published" : "draft";
+              setStatus(nextStatus);
+              if (nextStatus === "published" && !publishedAt) {
+                setPublishedAt(new Date().toISOString().slice(0, 10));
+              }
+            }}
             className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
           >
             <option value="published">Опубліковано</option>

@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency, event_id, event_slug, category_label } = body;
+  const { slug, title, author, description, cost, item_type, instagram_url, image_url, font_size, currency, event_id, event_slug, category_label, is_published } = body;
   if (!slug || !title || !author || !description) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
       event_id: event_id != null ? String(event_id) : undefined,
       event_slug: event_slug != null ? String(event_slug) : undefined,
       category_label: category_label != null ? String(category_label) : undefined,
+      is_published: is_published != null ? Boolean(is_published) : true,
     });
     return NextResponse.json(project);
   } catch (err: unknown) {
