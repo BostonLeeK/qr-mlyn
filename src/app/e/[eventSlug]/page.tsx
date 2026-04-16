@@ -1,4 +1,5 @@
 import { getEventBySlug, getProjectsByEventSlug, initDb } from "@/lib/db";
+import { isAuthenticated } from "@/lib/auth";
 import { SegmentedLine } from "@/components/SegmentedLine";
 import { InstagramIcon } from "@/components/InstagramIcon";
 import Image from "next/image";
@@ -9,12 +10,16 @@ export const dynamic = "force-dynamic";
 
 export default async function EventPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ eventSlug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }) {
   await initDb();
   const { eventSlug } = await params;
-  const event = await getEventBySlug(eventSlug);
+  const search = await searchParams;
+  const canPreview = search.preview === "1" && (await isAuthenticated());
+  const event = await getEventBySlug(eventSlug, { includeDrafts: canPreview });
   if (!event) notFound();
   const projects = await getProjectsByEventSlug(eventSlug);
 

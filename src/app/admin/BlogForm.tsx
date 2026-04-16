@@ -31,6 +31,7 @@ export default function BlogForm({
   const [excerpt, setExcerpt] = useState(post?.excerpt ?? "");
   const [content, setContent] = useState(post?.content ?? "");
   const [publishedAt, setPublishedAt] = useState(post?.published_at ? post.published_at.slice(0, 10) : "");
+  const [status, setStatus] = useState(post?.published_at ? "published" : "draft");
   const [coverImageUrl, setCoverImageUrl] = useState(post?.cover_image_url ?? "");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(null);
@@ -98,7 +99,7 @@ export default function BlogForm({
         excerpt: excerpt || undefined,
         content,
         cover_image_url: finalCoverImageUrl || undefined,
-        published_at: publishedAt ? `${publishedAt}T10:00:00.000Z` : undefined,
+        published_at: status === "published" && publishedAt ? `${publishedAt}T10:00:00.000Z` : undefined,
       };
       const res = await fetch(post ? `/api/blog/${post.id}` : "/api/blog", {
         method: post ? "PATCH" : "POST",
@@ -167,12 +168,24 @@ export default function BlogForm({
           />
         </div>
         <div>
+          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">Статус</label>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value === "published" ? "published" : "draft")}
+            className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+          >
+            <option value="published">Опубліковано</option>
+            <option value="draft">Чернетка</option>
+          </select>
+        </div>
+        <div>
           <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">Дата публікації</label>
           <input
             type="date"
             value={publishedAt}
             onChange={(e) => setPublishedAt(e.target.value)}
             className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+            disabled={status !== "published"}
           />
         </div>
         <div>
@@ -221,6 +234,15 @@ export default function BlogForm({
         <Link href="/admin/dashboard" className="font-body text-[0.9rem] text-text-muted hover:text-accent">
           Скасувати
         </Link>
+        {(post || title.trim()) ? (
+          <Link
+            href={`/open-call/${slugFromTitle(slug.trim() || title)}?preview=1`}
+            target="_blank"
+            className="font-body text-[0.9rem] text-text-muted hover:text-accent"
+          >
+            Preview
+          </Link>
+        ) : null}
         {post && onDelete ? (
           <button
             type="button"

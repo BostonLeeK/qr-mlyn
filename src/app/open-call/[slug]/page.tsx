@@ -1,4 +1,5 @@
 import { getBlogPostBySlug, initDb } from "@/lib/db";
+import { isAuthenticated } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,12 +10,16 @@ export const dynamic = "force-dynamic";
 
 export default async function OpenCallPostPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }) {
   await initDb();
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const search = await searchParams;
+  const canPreview = search.preview === "1" && (await isAuthenticated());
+  const post = await getBlogPostBySlug(slug, { includeDrafts: canPreview });
   if (!post) notFound();
 
   return (

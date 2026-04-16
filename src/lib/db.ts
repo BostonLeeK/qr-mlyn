@@ -123,6 +123,10 @@ export async function initDb() {
   } catch {
   }
   try {
+    await sql`ALTER TABLE events ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT TRUE`;
+  } catch {
+  }
+  try {
     await sql`ALTER TABLE projects ADD COLUMN IF NOT EXISTS event_id UUID`;
   } catch {
   }
@@ -319,17 +323,36 @@ export async function deleteProject(id: string) {
 }
 
 export async function getEvents() {
+  return getEventsByVisibility();
+}
+
+export async function getEventsByVisibility(options?: { publishedOnly?: boolean }) {
   const sql = getSql();
+  const publishedOnly = options?.publishedOnly ?? false;
+  if (publishedOnly) {
+    return sql`
+      SELECT * FROM events
+      WHERE is_published = TRUE
+      ORDER BY created_at DESC
+    `;
+  }
   return sql`
     SELECT * FROM events
     ORDER BY created_at DESC
   `;
 }
 
-export async function getEventBySlug(slug: string) {
+export async function getEventBySlug(slug: string, options?: { includeDrafts?: boolean }) {
   const sql = getSql();
+  const includeDrafts = options?.includeDrafts ?? false;
+  if (includeDrafts) {
+    const rows = await sql`
+      SELECT * FROM events WHERE slug = ${slug}
+    `;
+    return rows[0] ?? null;
+  }
   const rows = await sql`
-    SELECT * FROM events WHERE slug = ${slug}
+    SELECT * FROM events WHERE slug = ${slug} AND is_published = TRUE
   `;
   return rows[0] ?? null;
 }
@@ -353,10 +376,11 @@ export async function createEvent(data: {
   date_label?: string;
   location?: string;
   instagram_handle?: string;
+  is_published?: boolean;
 }) {
   const sql = getSql();
   const [row] = await sql`
-    INSERT INTO events (slug, title, subtitle, poster_image_url, date_label, location, instagram_handle)
+    INSERT INTO events (slug, title, subtitle, poster_image_url, date_label, location, instagram_handle, is_published)
     VALUES (
       ${data.slug},
       ${data.title},
@@ -364,7 +388,8 @@ export async function createEvent(data: {
       ${data.poster_image_url ?? null},
       ${data.date_label ?? null},
       ${data.location ?? null},
-      ${data.instagram_handle ?? null}
+      ${data.instagram_handle ?? null},
+      ${data.is_published ?? true}
     )
     RETURNING *
   `;
@@ -389,6 +414,7 @@ export async function updateEvent(
     date_label?: string;
     location?: string;
     instagram_handle?: string;
+    is_published?: boolean;
   }
 ) {
   const sql = getSql();
@@ -401,6 +427,7 @@ export async function updateEvent(
       date_label = ${data.date_label ?? null},
       location = ${data.location ?? null},
       instagram_handle = ${data.instagram_handle ?? null},
+      is_published = ${data.is_published ?? true},
       updated_at = NOW()
     WHERE id = ${id}
     RETURNING *
@@ -414,18 +441,40 @@ export async function deleteEvent(id: string) {
 }
 
 export async function getBlogPosts() {
+  return getBlogPostsByVisibility();
+}
+
+export async function getBlogPostsByVisibility(options?: { publishedOnly?: boolean }) {
   const sql = getSql();
+  const publishedOnly = options?.publishedOnly ?? false;
+  if (publishedOnly) {
+    return sql`
+      SELECT * FROM blog_posts
+      WHERE published_at IS NOT NULL AND published_at <= NOW()
+      ORDER BY published_at DESC, created_at DESC
+    `;
+  }
   return sql`
     SELECT * FROM blog_posts
     ORDER BY published_at DESC, created_at DESC
   `;
 }
 
-export async function getBlogPostBySlug(slug: string) {
+export async function getBlogPostBySlug(slug: string, options?: { includeDrafts?: boolean }) {
   const sql = getSql();
+  const includeDrafts = options?.includeDrafts ?? false;
+  if (includeDrafts) {
+    const rows = await sql`
+      SELECT * FROM blog_posts
+      WHERE slug = ${slug}
+    `;
+    return rows[0] ?? null;
+  }
   const rows = await sql`
     SELECT * FROM blog_posts
     WHERE slug = ${slug}
+      AND published_at IS NOT NULL
+      AND published_at <= NOW()
   `;
   return rows[0] ?? null;
 }

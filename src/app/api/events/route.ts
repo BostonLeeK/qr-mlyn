@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { slug, title, subtitle, poster_image_url, date_label, location, instagram_handle } = body;
+  const { slug, title, subtitle, poster_image_url, date_label, location, instagram_handle, is_published } = body;
   if (!slug || !title || !subtitle) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       date_label: date_label != null ? String(date_label) : undefined,
       location: location != null ? String(location) : undefined,
       instagram_handle: instagram_handle != null ? String(instagram_handle) : undefined,
+      is_published: is_published != null ? Boolean(is_published) : true,
     });
     return NextResponse.json(event);
   } catch (err: unknown) {

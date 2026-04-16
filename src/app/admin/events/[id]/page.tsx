@@ -52,6 +52,7 @@ export default async function EditEventPage({
                 date_label: string | null;
                 location: string | null;
                 instagram_handle: string | null;
+                is_published: boolean;
               }
             }
           />

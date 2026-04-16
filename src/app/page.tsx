@@ -1,4 +1,4 @@
-import { getEvents, initDb } from "@/lib/db";
+import { getEventsByVisibility, initDb } from "@/lib/db";
 import { SegmentedLine } from "@/components/SegmentedLine";
 import { InstagramIcon } from "@/components/InstagramIcon";
 import Image from "next/image";
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   await initDb();
-  const events = await getEvents();
+  const events = await getEventsByVisibility({ publishedOnly: true });
 
   return (
     <div className="flex min-h-screen flex-col">

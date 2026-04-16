@@ -30,7 +30,7 @@ export default function AdminBlogList({ posts }: { posts: BlogPost[] }) {
           >
             <span>{post.title}</span>
             <span className="text-[0.9rem] text-text-muted">
-              {post.published_at ? new Date(post.published_at).toLocaleDateString("uk-UA") : ""}
+              {post.published_at ? `Опубліковано · ${new Date(post.published_at).toLocaleDateString("uk-UA")}` : "Чернетка"}
             </span>
           </Link>
         </li>

@@ -90,7 +90,7 @@ export default async function AdminDashboard({
         {tab === "events" ? (
           <>
             <h1 className="font-head text-2xl font-bold text-text">Івенти</h1>
-            <AdminEventList events={events as { id: string; title: string; date_label: string | null }[]} />
+            <AdminEventList events={events as { id: string; title: string; date_label: string | null; is_published: boolean }[]} />
           </>
         ) : null}
         {tab === "projects" ? (

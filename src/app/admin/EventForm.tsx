@@ -15,6 +15,7 @@ interface EventData {
   date_label: string | null;
   location: string | null;
   instagram_handle: string | null;
+  is_published: boolean;
 }
 
 export default function EventForm({
@@ -33,6 +34,7 @@ export default function EventForm({
   const [dateLabel, setDateLabel] = useState(event?.date_label ?? "");
   const [location, setLocation] = useState(event?.location ?? "");
   const [instagramHandle, setInstagramHandle] = useState(event?.instagram_handle ?? "@mlyn_dhp");
+  const [isPublished, setIsPublished] = useState(event?.is_published ?? true);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -83,6 +85,7 @@ export default function EventForm({
         date_label: dateLabel || undefined,
         location: location || undefined,
         instagram_handle: instagramHandle || undefined,
+        is_published: isPublished,
       };
       const res = await fetch(event ? `/api/events/${event.id}` : "/api/events", {
         method: event ? "PATCH" : "POST",
@@ -192,6 +195,19 @@ export default function EventForm({
         </div>
         <div>
           <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
+            Статус
+          </label>
+          <select
+            value={isPublished ? "published" : "draft"}
+            onChange={(e) => setIsPublished(e.target.value === "published")}
+            className="font-body w-full border-b border-text-muted/30 bg-transparent py-2.5 text-text outline-none focus:border-text"
+          >
+            <option value="published">Опубліковано</option>
+            <option value="draft">Чернетка</option>
+          </select>
+        </div>
+        <div>
+          <label className="font-body mb-1.5 block text-[0.85rem] text-text-muted">
             Instagram
           </label>
           <input
@@ -218,6 +234,15 @@ export default function EventForm({
         >
           Скасувати
         </Link>
+        {(event || title.trim()) && (
+          <Link
+            href={`/e/${event?.slug ?? slugFromTitle(title)}?preview=1`}
+            target="_blank"
+            className="font-body text-[0.9rem] text-text-muted hover:text-accent"
+          >
+            Preview
+          </Link>
+        )}
         {event && onDelete && (
           <button
             type="button"

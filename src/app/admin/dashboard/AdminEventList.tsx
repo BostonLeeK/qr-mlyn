@@ -6,6 +6,7 @@ interface EventItem {
   id: string;
   title: string;
   date_label: string | null;
+  is_published: boolean;
 }
 
 export default function AdminEventList({ events }: { events: EventItem[] }) {
@@ -29,7 +30,9 @@ export default function AdminEventList({ events }: { events: EventItem[] }) {
             className="font-body flex items-center justify-between py-4 text-text transition-colors hover:text-accent"
           >
             <span>{event.title}</span>
-            <span className="text-[0.9rem] text-text-muted">{event.date_label ?? ""}</span>
+            <span className="text-[0.9rem] text-text-muted">
+              {event.is_published ? "Опубліковано" : "Чернетка"} {event.date_label ? `· ${event.date_label}` : ""}
+            </span>
           </Link>
         </li>
       ))}

@@ -1,4 +1,4 @@
-import { getBlogPosts, initDb } from "@/lib/db";
+import { getBlogPostsByVisibility, initDb } from "@/lib/db";
 import Image from "next/image";
 import Link from "next/link";
 import { SegmentedLine } from "@/components/SegmentedLine";
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function OpenCallPage() {
   await initDb();
-  const posts = await getBlogPosts();
+  const posts = await getBlogPostsByVisibility({ publishedOnly: true });
 
   return (
     <div className="flex min-h-screen flex-col">
