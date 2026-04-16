@@ -529,7 +529,7 @@ export async function getBlogPostsByVisibility(options?: { publishedOnly?: boole
   if (publishedOnly) {
     return sql`
       SELECT * FROM blog_posts
-      WHERE published_at IS NOT NULL AND published_at <= NOW()
+      WHERE published_at IS NOT NULL
       ORDER BY published_at DESC, created_at DESC
     `;
   }
@@ -553,7 +553,6 @@ export async function getBlogPostBySlug(slug: string, options?: { includeDrafts?
     SELECT * FROM blog_posts
     WHERE slug = ${slug}
       AND published_at IS NOT NULL
-      AND published_at <= NOW()
   `;
   return rows[0] ?? null;
 }
