@@ -12,6 +12,7 @@ interface EventData {
   date_label: string | null;
   location: string | null;
   instagram_handle: string | null;
+  is_published: boolean;
 }
 
 export default function EventFormWithDelete({ event }: { event: EventData }) {
