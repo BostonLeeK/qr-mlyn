@@ -14,7 +14,7 @@ interface BlogPost {
   excerpt: string | null;
   content: string;
   cover_image_url: string | null;
-  published_at: string | null;
+  published_at: string | Date | null;
 }
 
 export default function BlogForm({
@@ -24,13 +24,17 @@ export default function BlogForm({
   post?: BlogPost;
   onDelete?: () => void;
 }) {
+  const initialPublishedAt =
+    post?.published_at == null
+      ? ""
+      : new Date(post.published_at).toISOString().slice(0, 10);
   const router = useRouter();
   const [title, setTitle] = useState(post?.title ?? "");
   const [slug, setSlug] = useState(post?.slug ?? "");
   const slugEditedByUser = useRef(!!post);
   const [excerpt, setExcerpt] = useState(post?.excerpt ?? "");
   const [content, setContent] = useState(post?.content ?? "");
-  const [publishedAt, setPublishedAt] = useState(post?.published_at ? post.published_at.slice(0, 10) : "");
+  const [publishedAt, setPublishedAt] = useState(initialPublishedAt);
   const [status, setStatus] = useState(post?.published_at ? "published" : "draft");
   const [coverImageUrl, setCoverImageUrl] = useState(post?.cover_image_url ?? "");
   const [coverFile, setCoverFile] = useState<File | null>(null);
